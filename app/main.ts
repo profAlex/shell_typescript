@@ -5,6 +5,12 @@ const rl = createInterface({
   output: process.stdout,
 });
 
+enum AvaliableCommands {
+    echo = 'echo',
+    exit = 'exit',
+    type = 'type',
+}
+
 function SplitInputCommand(commandInput: string) :string[] {
     const index = commandInput.trim().indexOf(' ');
     if (index !== -1)
@@ -27,8 +33,16 @@ function run() {
 
         const splitCommand = SplitInputCommand(command);
 
-        if (splitCommand.length > 1 && splitCommand[0] === 'echo') {
+        if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.echo) {
             console.log(splitCommand[1]);
+        }
+        else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.type) {
+            if (splitCommand[1] in AvaliableCommands) {
+                console.log(`${splitCommand[1]} is a shell builtin`);
+            }
+            else {
+                console.log(`${splitCommand[1]}: command not found`);
+            }
         }
         else
         {
