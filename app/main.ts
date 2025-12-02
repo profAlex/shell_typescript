@@ -9,15 +9,15 @@ function run() {
 
     rl.question('$ ', (command) => {
 
-        if(true)
-        {
-            console.log(`${command}: command not found`);
-        }
-
         if(command === 'exit') {
             rl.close();
             // console.log("Exited...");
             return;
+        }
+
+        if(true)
+        {
+            console.log(`${command}: command not found`);
         }
 
         run();
