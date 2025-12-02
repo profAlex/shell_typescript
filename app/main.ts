@@ -16,7 +16,7 @@ function run() {
 
         if(command === 'exit') {
             rl.close();
-            console.log("Exited...");
+            // console.log("Exited...");
             return;
         }
 
