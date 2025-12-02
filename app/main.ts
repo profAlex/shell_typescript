@@ -41,7 +41,7 @@ function run() {
                 console.log(`${splitCommand[1]} is a shell builtin`);
             }
             else {
-                console.log(`${splitCommand[1]}: command not found`);
+                console.log(`${splitCommand[1]}: not found`);
             }
         }
         else
