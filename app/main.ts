@@ -5,7 +5,23 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-// TODO: Uncomment the code below to pass the first stage
-rl.question("$ ", (answer) => {
-  rl.close();
-});
+function run() {
+
+    rl.question('$ ', (command) => {
+
+        if(true)
+        {
+            console.log(`${command}: command not found`);
+        }
+
+        if(command === 'exit') {
+            rl.close();
+            console.log("Exited...");
+            return;
+        }
+
+        run();
+    });
+}
+
+run();
