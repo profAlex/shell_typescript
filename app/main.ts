@@ -85,14 +85,8 @@ async function run() {
             console.log(`${command}: command not found`);
         }
 
-
-        await run();
+        run();
     });
 }
 
-try{
-    run();
-}
-catch(e){
-    console.error(`Error: ${e}`);
-}
+run();
