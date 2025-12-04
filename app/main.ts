@@ -12,11 +12,6 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-
-
-
-
-
 async function run() {
     rl.question('$ ', async (command) => {
 
@@ -57,10 +52,16 @@ async function run() {
         }
         else if (splitCommand.length !== 0) {
             const executableName :string = splitCommand[0];
+            //console.log("--- commandName DEBUG:", executableName);
+
             const fullPath = await findExecutableInPath(executableName);
+            //console.log("--- fullPath DEBUG:", fullPath);
+
 
             if (fullPath) {
                 const args = splitCommand.slice(1);
+
+                //console.log("--- args DEBUG:", args);
                 const result = await commandExecuteWIthPromise(executableName, args, fullPath);
 
                 const {
@@ -70,9 +71,14 @@ async function run() {
                     returnedError
                 } = result;
 
+                //console.log("--- isSuccessful DEBUG:", isSuccessful);
+
                 if (returnedStdout) {
                     console.log(`${returnedStdout}`);
                 }
+            }
+            else {
+                console.log(`${command}: command not found`);
             }
         }
         else {

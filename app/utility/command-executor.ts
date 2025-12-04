@@ -1,4 +1,5 @@
 import { exec } from 'child_process';
+import { dirname } from 'path';
 
 
 type execResult = {
@@ -10,11 +11,16 @@ type execResult = {
 
 export async function commandExecuteWIthPromise(commandName :string, params :string[]=[], pathToTheCommand :string) :Promise<execResult> {
     let fullCommand :string = commandName;
+
     if (params.length > 0) {
         fullCommand = [fullCommand, ...params].join(' ');
+        //console.log("--- fullCommand DEBUG:", fullCommand);
     }
+
+    //console.log("--- fullCommand DEBUG:", fullCommand);
+
     return new Promise((resolve, reject) => {
-        exec(fullCommand, {cwd: pathToTheCommand}, (error :Error|null, stdout :string, stderr :string) => {
+        exec(fullCommand, {cwd: dirname(pathToTheCommand)}, (error :Error|null, stdout :string, stderr :string) => {
             if(error){
                 resolve({
                     isSuccessful: false,
