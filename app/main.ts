@@ -74,7 +74,8 @@ async function run() {
                 //console.log("--- isSuccessful DEBUG:", isSuccessful);
 
                 if (returnedStdout) {
-                    console.log(`${returnedStdout}`);
+                    process.stdout.write(returnedStdout);
+                    // console.log(`${returnedStdout}\r`);
                 }
             }
             else {
@@ -85,8 +86,14 @@ async function run() {
             console.log(`${command}: command not found`);
         }
 
-        run();
+
+        await run();
     });
 }
 
-run();
+try{
+    run();
+}
+catch(e){
+    console.error(`Error: ${e}`);
+}
