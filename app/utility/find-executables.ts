@@ -1,4 +1,3 @@
-import {env} from "process";
 import {join} from "path";
 import {constants, stat} from "fs";
 import {promisify} from "util";
@@ -37,7 +36,7 @@ async function isFileExecutable(filePath: string): Promise<boolean> {
 
 
 export async function findExecutableInPath(fileName: string): Promise<string | null> {
-    const pathDirectories = PathManager.getDirectories();
+    const pathDirectories = PathManager.getAvaliableDirectories();
     if (!pathDirectories) {
         throw new Error('Error while getting path directories');
     }

@@ -3,14 +3,18 @@ import { env } from 'process';
 
 import {findExecutableInPath} from "./utility/find-executables.ts";
 import {AvaliableCommands} from "./types/avaliable-commands.ts";
-
-import {splitInputCommand} from "./utility/command-manager.ts";
+import {splitInputCommand} from "./utility/raw-command-splitter.ts";
+import {commandExecuteWIthPromise} from "./utility/command-executor.ts";
 
 
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+
+
+
+
 
 
 async function run() {
@@ -32,6 +36,7 @@ async function run() {
         else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.echo) {
             console.log(splitCommand[1]);
         }
+
         else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.type) {
             if (splitCommand[1] in AvaliableCommands) {
                 console.log(`${splitCommand[1]} is a shell builtin`);
@@ -49,7 +54,28 @@ async function run() {
             else {
                 console.log(`${splitCommand[1]}: not found`);
             }
-        } else {
+        }
+        else if (splitCommand.length !== 0) {
+            const executableName :string = splitCommand[0];
+            const fullPath = await findExecutableInPath(executableName);
+
+            if (fullPath) {
+                const args = splitCommand.slice(1);
+                const result = await commandExecuteWIthPromise(executableName, args, fullPath);
+
+                const {
+                    isSuccessful,
+                    returnedStdout,
+                    returnedStderr,
+                    returnedError
+                } = result;
+
+                if (returnedStdout) {
+                    console.log(`${returnedStdout}`);
+                }
+            }
+        }
+        else {
             console.log(`${command}: command not found`);
         }
 
