@@ -53,6 +53,7 @@ async function run() {
             console.log(`${command}: command not found`);
         }
 
+
         await run();
     });
 }
@@ -61,5 +62,5 @@ try{
     run();
 }
 catch(e){
-    console.error(e);
+    console.error(`Error: ${e}`);
 }
