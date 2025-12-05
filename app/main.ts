@@ -17,21 +17,17 @@ async function run() {
 
         if (command.trim() === 'exit') {
             rl.close();
-
             return;
         }
 
         const splitCommand = splitInputCommand(command);
-
         if (splitCommand.length === 1 && splitCommand[0] === 'test') {
             const path = env.PATH;
-
             console.log(path);
         }
         else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.echo) {
             console.log(splitCommand[1]);
         }
-
         else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.type) {
             if (splitCommand[1] in AvaliableCommands) {
                 console.log(`${splitCommand[1]} is a shell builtin`);
@@ -50,18 +46,16 @@ async function run() {
                 console.log(`${splitCommand[1]}: not found`);
             }
         }
+        else if (splitCommand.length !== 0 && splitCommand[0] === AvaliableCommands.pwd) {
+            const currentWorkingDirectory = process.cwd();
+            console.log(`${currentWorkingDirectory}`);
+        }
         else if (splitCommand.length !== 0) {
             const executableName :string = splitCommand[0];
-            //console.log("--- commandName DEBUG:", executableName);
-
             const fullPath = await findExecutableInPath(executableName);
-            //console.log("--- fullPath DEBUG:", fullPath);
-
 
             if (fullPath) {
                 const args = splitCommand.slice(1);
-
-                //console.log("--- args DEBUG:", args);
                 const result = await commandExecuteWIthPromise(executableName, args, fullPath);
 
                 const {
@@ -71,12 +65,11 @@ async function run() {
                     returnedError
                 } = result;
 
-                //console.log("--- isSuccessful DEBUG:", isSuccessful);
-
                 if (returnedStdout) {
                     process.stdout.write(returnedStdout);
                     // console.log(`${returnedStdout}\r`);
                 }
+                // TODO: тут еще обработать ошибки из result
             }
             else {
                 console.log(`${command}: command not found`);
@@ -85,7 +78,6 @@ async function run() {
         else {
             console.log(`${command}: command not found`);
         }
-
 
         await run();
     });
