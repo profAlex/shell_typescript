@@ -5,6 +5,7 @@ import {findExecutableInPath} from "./utility/find-executables.ts";
 import {AvaliableCommands} from "./types/avaliable-commands.ts";
 import {splitInputCommand} from "./utility/raw-command-splitter.ts";
 import {commandExecuteWIthPromise} from "./utility/command-executor.ts";
+import {chdirWithChecks} from "./utility/cd-command-facilitator.ts";
 
 
 const rl = createInterface({
@@ -49,6 +50,9 @@ async function run() {
         else if (splitCommand.length !== 0 && splitCommand[0] === AvaliableCommands.pwd) {
             const currentWorkingDirectory = process.cwd();
             console.log(`${currentWorkingDirectory}`);
+        }
+        else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.cd ) {
+            await chdirWithChecks(splitCommand[1]);
         }
         else if (splitCommand.length !== 0) {
             const executableName :string = splitCommand[0];

@@ -3,4 +3,5 @@ export enum AvaliableCommands {
     exit = 'exit',
     type = 'type',
     pwd = 'pwd',
+    cd = 'cd',
 }
