@@ -4,4 +4,5 @@ export enum AvaliableCommands {
     type = 'type',
     pwd = 'pwd',
     cd = 'cd',
+    tilda = '~',
 }

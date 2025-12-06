@@ -51,9 +51,17 @@ async function run() {
             const currentWorkingDirectory = process.cwd();
             console.log(`${currentWorkingDirectory}`);
         }
-        else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.cd ) {
+        else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.cd) {
             await chdirWithChecks(splitCommand[1]);
         }
+        else if (splitCommand.length === 1 && splitCommand[0] === AvaliableCommands.tilda) {
+            const homePath = process.env.HOME ?? undefined;
+
+            if(homePath && (typeof homePath === 'string') && (homePath.trim().length > 0)) {
+                await chdirWithChecks(homePath);
+            }
+        }
+
         else if (splitCommand.length !== 0) {
             const executableName :string = splitCommand[0];
             const fullPath = await findExecutableInPath(executableName);
@@ -73,7 +81,7 @@ async function run() {
                     process.stdout.write(returnedStdout);
                     // console.log(`${returnedStdout}\r`);
                 }
-                // TODO: тут еще обработать ошибки из result
+                // TODO: тут еще обработать ошибки из result (на случай когда и если они появятся)
             }
             else {
                 console.log(`${command}: command not found`);
