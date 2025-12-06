@@ -27,6 +27,17 @@ function statPromise(path: string): Promise<fs.Stats> {
 export async function chdirWithChecks(path: string): Promise<void> {
     // Неблокирующие проверки через fs.access
     try {
+        if(path.trim() === '~') {
+            const homePath = process.env.HOME ?? undefined;
+            if(!homePath || !(typeof homePath === 'string') || !(homePath.trim().length > 0)) {
+                // console.log(`cd: couldn't resolve HOME directory for ~ command`);
+
+                return;
+            }
+
+            path = homePath;
+        }
+
         // более лайтовый вариант
         // // Проверка существования
         // await access(path, fs.constants.F_OK);
@@ -34,6 +45,7 @@ export async function chdirWithChecks(path: string): Promise<void> {
         // // Проверка прав на запись
         // await access(path, fs.constants.W_OK);
 
+        // проверки на наличие прав
         const stats = await statPromise(path);
         // if(!stats.isDirectory()) {
         //     console.log(`cd: ${path}: No such file or directory`);
