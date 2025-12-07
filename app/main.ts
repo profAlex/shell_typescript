@@ -13,6 +13,9 @@ const rl = createInterface({
   output: process.stdout,
 });
 
+
+
+
 async function run() {
     rl.question('$ ', async (command) => {
 
@@ -23,8 +26,14 @@ async function run() {
 
         const splitCommand = splitInputCommand(command);
         if (splitCommand.length === 1 && splitCommand[0] === 'test') {
-            const path = env.PATH;
-            console.log(path);
+            // const path = env.PATH;
+            // console.log(path);
+
+            const parser = new CommandParserLite('((asd))');
+            console.log(parser.getMaxDepth());
+            parser.parseExpression();
+            console.log(parser.getMaxDepth());
+
         }
         else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.echo) {
             console.log(splitCommand[1]);
