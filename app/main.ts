@@ -108,6 +108,10 @@ async function run() {
                     process.stdout.write(returnedStdout);
                     // console.log(`${returnedStdout}\r`);
                 }
+                if (!isSuccessful) {
+                    console.log(`${returnedStderr}`);
+                    console.log(`${returnedError}`);
+                }
                 // TODO: тут еще обработать ошибки из result (на случай когда и если они появятся)
             }
             else {

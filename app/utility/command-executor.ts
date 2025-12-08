@@ -24,12 +24,10 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
     let editedCommand = additionalParser.getOutput();
     // console.log("--- edited command:", editedCommand);
     editedCommand = editedCommand.filter(item => isNaN(Number(item)));
-    fullCommand = editedCommand.join(' ');
+    fullCommand = editedCommand.join(' ~');
     // console.log("--- fullCommand AFTER FILTERING:", fullCommand);
 
     // statPromise
-
-    //console.log("--- fullCommand DEBUG:", fullCommand);
 
     return new Promise((resolve, reject) => {
         exec(fullCommand, {cwd: dirname(pathToTheCommand)}, (error :Error|null, stdout :string, stderr :string) => {
@@ -39,6 +37,7 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
                     returnedStderr: stderr,
                     returnedError: error
                 });
+                // console.log("ERROR");
                 return;
             }
             resolve({
@@ -46,6 +45,8 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
                 returnedStderr: stderr,
                 returnedStdout: stdout
             });
+            // console.log("RESOLVE");
+
         });
     });
 }
