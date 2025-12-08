@@ -6,6 +6,7 @@ import {AvaliableCommands} from "./types/avaliable-commands.ts";
 import {splitInputCommand} from "./utility/raw-command-splitter.ts";
 import {commandExecuteWIthPromise} from "./utility/command-executor.ts";
 import {chdirWithChecks} from "./utility/cd-command-facilitator.ts";
+import {CommandParserLite} from "./utility/parser.ts";
 
 
 const rl = createInterface({
@@ -28,11 +29,17 @@ async function run() {
         if (splitCommand.length === 1 && splitCommand[0] === 'test') {
             // const path = env.PATH;
             // console.log(path);
-
-            const parser = new CommandParserLite('((asd))');
-            console.log(parser.getMaxDepth());
-            parser.parseExpression();
-            console.log(parser.getMaxDepth());
+            try
+            {
+                // const parser = new CommandParserLite('((asd(()((()))())))');
+                const parser = new CommandParserLite('{\'\'({\'   a  sd  \'})\'\'}');
+                parser.parse();
+                console.log(parser.getMaxDepth());
+                console.log(parser.getOutput());
+            }
+            catch (err) {
+                console.log(`${err}`);
+            }
 
         }
         else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.echo) {
