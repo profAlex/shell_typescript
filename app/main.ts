@@ -25,17 +25,19 @@ async function run() {
             return;
         }
 
-        const splitCommand = splitInputCommand(command);
+        const parser = new CommandParserLite(command);
+        parser.parse();
+        const splitCommand :string[] = parser.getOutput();
+        // console.log(splitCommand);
+
         if (splitCommand.length === 1 && splitCommand[0] === 'test') {
-            // const path = env.PATH;
-            // console.log(path);
             try
             {
                 // const parser = new CommandParserLite('((asd(()((()))())))');
-                const parser = new CommandParserLite('{\'\'({\'   a  sd  \'})\'\'}');
-                parser.parse();
-                console.log(parser.getMaxDepth());
-                console.log(parser.getOutput());
+                const testParser = new CommandParserLite('  as(d  \'ec( ho\' \'\'\'type\' asd \'  {}  \'   ) ');
+                testParser.parse();
+                console.log(testParser.getMaxDepth());
+                console.log(testParser.getOutput());
             }
             catch (err) {
                 console.log(`${err}`);

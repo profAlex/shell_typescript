@@ -1,5 +1,6 @@
-const MAX_INPUT_LENGTH = 30;
+const MAX_INPUT_LENGTH = 400;
 
+const delimeters = new Set([' ', '{', '}', '(', ')', '\'']);
 
 export class CommandParserLite {
     private input: string;
@@ -8,6 +9,8 @@ export class CommandParserLite {
     private pos: number;
     private output: string[];
     private inputLength: number;
+
+
 
     constructor(input: string) {
         if (input.length > MAX_INPUT_LENGTH) {
@@ -19,19 +22,19 @@ export class CommandParserLite {
         this.tempDepth = 0;
         this.pos = 0;
         this.output = [];
-        this.inputLength = input.length;
+        this.inputLength = input.trim().length;
     }
 
     public parse():void {
         this.parseExpression('');
-        console.log(this.tempDepth);
+        // console.log(this.tempDepth);
         if(this.tempDepth > 0)
         {
             throw new Error('Incorrect bracket sequence')
         }
     }
 
-    private parseInsideQuotes():void {
+    private parseInsideSingleQuotes():void {
         let tempStringInsideQuotes :string = '';
         while(this.input[this.pos] !== '\'' && this.pos < this.inputLength) {
             tempStringInsideQuotes += this.input[this.pos];
@@ -47,6 +50,22 @@ export class CommandParserLite {
         }
 
         this.pos += 1;
+        return;
+    }
+
+    private parseInsideCommand() :void {
+        let tempStringInsideQuotes :string = '';
+        while(!delimeters.has(this.input[this.pos]) && this.pos < this.inputLength) {
+            tempStringInsideQuotes += this.input[this.pos];
+            this.pos += 1;
+        }
+
+        if (tempStringInsideQuotes.length !== 0) {
+            this.output.push(tempStringInsideQuotes);
+        }
+
+        // если здесь прибавить - то пропустим след символ, а это применимо только в варианте когда мы считываем внутри одинарных кавычек
+        // this.pos += 1;
         return;
     }
 
@@ -113,11 +132,19 @@ export class CommandParserLite {
                     return;
                 case '\'':
                     this.pos += 1;
-                    this.parseInsideQuotes();
+                    this.parseInsideSingleQuotes();
 
                     break;
-                default:
+                case ' ':
                     this.pos += 1;
+                    break;
+                default:
+                    // это не нужно т.к. мы начинаем считывать с самого начала а не как в варианте с одинарными кавычками со следующего после кавычек
+                    // this.pos += 1;
+
+                    this.parseInsideCommand();
+                    // this.pos += 1;
+
                     break;
             }
         }
