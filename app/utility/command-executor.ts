@@ -24,8 +24,13 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
     let editedCommand = additionalParser.getOutput();
     // console.log("--- edited command:", editedCommand);
     editedCommand = editedCommand.filter(item => isNaN(Number(item)));
-    fullCommand = editedCommand.join(' .');
-    // console.log("--- fullCommand AFTER FILTERING:", fullCommand);
+    for(let i = 0; i < editedCommand.length; i++) {
+        if(editedCommand[i][0] === '/'){
+            editedCommand[i] = editedCommand[i].slice(1);
+        }
+    }
+    fullCommand = editedCommand.join(' ');
+    console.log("--- fullCommand AFTER FILTERING:", fullCommand);
 
     // statPromise
 
