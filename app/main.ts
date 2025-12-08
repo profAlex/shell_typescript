@@ -86,8 +86,15 @@ async function run() {
             const executableName :string = splitCommand[0];
             const fullPath = await findExecutableInPath(executableName);
 
+            // console.log(`HERE`);
             if (fullPath) {
+                //console.log(`splitCommand ${splitCommand}`);
+
+
                 const args = splitCommand.slice(1);
+                //console.log(`ARGS ${args}`);
+                //console.log(splitCommand[0], splitCommand[1], splitCommand[2]);
+
                 const result = await commandExecuteWIthPromise(executableName, args, fullPath);
 
                 const {

@@ -14,7 +14,7 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
 
     if (params.length > 0) {
         fullCommand = [fullCommand, ...params].join(' ');
-        //console.log("--- fullCommand DEBUG:", fullCommand);
+        // console.log("--- fullCommand DEBUG:", fullCommand);
     }
 
     //console.log("--- fullCommand DEBUG:", fullCommand);
