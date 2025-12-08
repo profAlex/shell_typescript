@@ -45,7 +45,8 @@ async function run() {
 
         }
         else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.echo) {
-            console.log(splitCommand[1]);
+            const commandsToPrint = splitCommand.slice(1);
+            console.log(commandsToPrint.join(' '));
         }
         else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.type) {
             if (splitCommand[1] in AvaliableCommands) {
