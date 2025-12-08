@@ -25,6 +25,7 @@ async function run() {
             return;
         }
 
+        command = command.replace(/''+/g, '');
         const parser = new CommandParserLite(command);
         parser.parse();
         const splitCommand :string[] = parser.getOutput();
