@@ -24,7 +24,7 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
     let editedCommand = additionalParser.getOutput();
     // console.log("--- edited command:", editedCommand);
     editedCommand = editedCommand.filter(item => isNaN(Number(item)));
-    fullCommand = editedCommand.join(' ~');
+    fullCommand = editedCommand.join(' .');
     // console.log("--- fullCommand AFTER FILTERING:", fullCommand);
 
     // statPromise
