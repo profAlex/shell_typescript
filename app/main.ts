@@ -30,7 +30,7 @@ async function run() {
         const splitCommand :string[] = parser.getOutput();
         // console.log(splitCommand);
 
-        if (splitCommand.length === 1 && splitCommand[0] === 'test') {
+        if (splitCommand.length === 1 && splitCommand[0] === 'testcustom') {
             try
             {
                 // const parser = new CommandParserLite('((asd(()((()))())))');
