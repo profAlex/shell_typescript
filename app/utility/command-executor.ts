@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import { dirname } from 'path';
+import {CommandParserLite} from "./parser.ts";
 
 
 type execResult = {
@@ -16,6 +17,17 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
         fullCommand = [fullCommand, ...params].join(' ');
         // console.log("--- fullCommand DEBUG:", fullCommand);
     }
+
+    // cat '/tmp/pig/f   26' '/tmp/pig/f   17' '/tmp/pig/f   99'
+    const additionalParser = new CommandParserLite(fullCommand);
+    additionalParser.parse();
+    let editedCommand = additionalParser.getOutput();
+    // console.log("--- edited command:", editedCommand);
+    editedCommand = editedCommand.filter(item => isNaN(Number(item)));
+    fullCommand = editedCommand.join(' ');
+    // console.log("--- fullCommand AFTER FILTERING:", fullCommand);
+
+    // statPromise
 
     //console.log("--- fullCommand DEBUG:", fullCommand);
 
