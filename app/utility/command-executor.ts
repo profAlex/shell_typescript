@@ -15,7 +15,16 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
 
     if (params.length > 0) {
         let fullCommandArray = [...params];
-        fullCommandArray = fullCommandArray.map(str => `'${str}'`);
+
+        // fullCommandArray = fullCommandArray.map(str => `'${str}'`);
+        fullCommandArray = fullCommandArray.map(str => {
+            if (str.includes("'")) {
+                return `"${str}"`;
+            } else {
+                return `'${str}'`;
+            }
+        });
+
         fullCommand = [fullCommand, ...fullCommandArray].join(' ');
 
         // console.log("--- fullCommand DEBUG:", fullCommand);
