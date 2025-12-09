@@ -22,7 +22,11 @@ async function run() {
             return;
         }
 
+        // remove '' cases from input string
         command = command.replace(/''+/g, '');
+        // remove "" cases from input string
+        command = command.replace(/""+/g, '');
+
         const parser = new CommandParserLite(command);
         parser.parse();
         const splitCommand :string[] = parser.getOutput();
