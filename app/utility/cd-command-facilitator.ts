@@ -4,7 +4,7 @@ import { promisify } from 'util';
 // const access = promisify(fs.access);
 
 
-// function to check if the path exists and whether we have access to such a pass
+// function to check if the path exists and whether we have access to such a path
 function statPromise(path: string): Promise<fs.Stats> {
     return new Promise((resolve, reject) => {
         fs.stat(path, (err, stats) => {

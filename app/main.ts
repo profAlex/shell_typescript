@@ -14,9 +14,6 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-
-
-
 async function run() {
     rl.question('$ ', async (command) => {
 

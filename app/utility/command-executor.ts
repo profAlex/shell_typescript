@@ -14,30 +14,12 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
     let fullCommand :string = commandName;
 
     if (params.length > 0) {
-        //fullCommand = [fullCommand, ...params].join(' ');
         let fullCommandArray = [...params];
         fullCommandArray = fullCommandArray.map(str => `'${str}'`);
         fullCommand = [fullCommand, ...fullCommandArray].join(' ');
 
-        // console.log(fullCommand);
-
         // console.log("--- fullCommand DEBUG:", fullCommand);
     }
-
-    // cat '/tmp/pig/f   26' '/tmp/pig/f   17' '/tmp/pig/f   99'
-    // const additionalParser = new CommandParserLite(fullCommand);
-    // additionalParser.parse();
-    // let editedCommand = additionalParser.getOutput();
-    // // console.log("--- edited command:", editedCommand);
-    // editedCommand = editedCommand.filter(item => isNaN(Number(item)));
-    // for(let i = 0; i < editedCommand.length; i++) {
-    //     if(editedCommand[i][0] === '/'){
-    //         editedCommand[i] = editedCommand[i].slice(1);
-    //     }
-    // }
-    // fullCommand = editedCommand.join(' ');
-
-    // statPromise
 
     return new Promise((resolve, reject) => {
         exec(fullCommand, {cwd: dirname(pathToTheCommand)}, (error :Error|null, stdout :string, stderr :string) => {
@@ -47,7 +29,6 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
                     returnedStderr: stderr,
                     returnedError: error
                 });
-                // console.log("ERROR");
                 return;
             }
             resolve({
@@ -55,8 +36,6 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
                 returnedStderr: stderr,
                 returnedStdout: stdout
             });
-            // console.log("RESOLVE");
-
         });
     });
 }

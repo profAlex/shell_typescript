@@ -53,6 +53,25 @@ export class CommandParserLite {
         return;
     }
 
+    private parseInsideDoubleQuotes():void {
+        let tempStringInsideQuotes :string = '';
+        while(this.input[this.pos] !== '\"' && this.pos < this.inputLength) {
+            tempStringInsideQuotes += this.input[this.pos];
+            this.pos += 1;
+        }
+
+        if (this.input[(this.pos)] === '\"' && tempStringInsideQuotes.length !== 0) {
+            this.output.push(tempStringInsideQuotes);
+        }
+
+        if (this.input[(this.pos)] !== '\"') {
+            throw new Error('Incorrect double quote sequence')
+        }
+
+        this.pos += 1;
+        return;
+    }
+
     private parseInsideCommand() :void {
         let tempStringInsideQuotes :string = '';
         while(!delimeters.has(this.input[this.pos]) && this.pos < this.inputLength) {
@@ -69,7 +88,7 @@ export class CommandParserLite {
         return;
     }
 
-    //TODO: здесь еще еть простор для оптимизации - каждый case с обычными и фигурными скобками
+    //TODO: здесь еще есть простор для оптимизации - каждый case с обычными и фигурными скобками
     // неверное можно обрабатывать в отдельном подметоде, который сам себя вызывает рекурсивно
     // что будет выглядеть опрятнее, наверное
     private parseExpression(sentBracketFlag :string): void {
@@ -133,6 +152,11 @@ export class CommandParserLite {
                 case '\'':
                     this.pos += 1;
                     this.parseInsideSingleQuotes();
+
+                    break;
+                case '\"':
+                    this.pos += 1;
+                    this.parseInsideDoubleQuotes();
 
                     break;
                 case ' ':
