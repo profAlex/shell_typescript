@@ -37,6 +37,8 @@ export class CommandParserLite {
     private parseInsideSingleQuotes():void {
         let tempStringInsideQuotes :string = '';
         while(this.input[this.pos] !== '\'' && this.pos < this.inputLength) {
+            if(this.input[this.pos] === '\\')
+                this.pos += 1;
             tempStringInsideQuotes += this.input[this.pos];
             this.pos += 1;
         }
@@ -56,6 +58,8 @@ export class CommandParserLite {
     private parseInsideDoubleQuotes():void {
         let tempStringInsideQuotes :string = '';
         while(this.input[this.pos] !== '\"' && this.pos < this.inputLength) {
+            if(this.input[this.pos] === '\\')
+                this.pos += 1;
             tempStringInsideQuotes += this.input[this.pos];
             this.pos += 1;
         }
@@ -88,6 +92,7 @@ export class CommandParserLite {
         return;
     }
 
+
     //TODO: здесь еще есть простор для оптимизации - каждый case с обычными и фигурными скобками
     // неверное можно обрабатывать в отдельном подметоде, который сам себя вызывает рекурсивно
     // что будет выглядеть опрятнее, наверное
@@ -96,6 +101,12 @@ export class CommandParserLite {
 
         while (this.pos < this.inputLength) {
             switch((this.input)[this.pos]) {
+                case '\\':
+                    this.pos += 1;
+                    this.output.push((this.input)[this.pos]);
+                    this.pos += 1;
+
+                    break;
                 case '(':
                     // bracketFlag = 1;
                     this.pos += 1;

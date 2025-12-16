@@ -16,7 +16,9 @@ export async function commandExecuteWIthPromise(commandName :string, params :str
     if (params.length > 0) {
         let fullCommandArray = [...params];
 
-        // fullCommandArray = fullCommandArray.map(str => `'${str}'`);
+        // Если строка содержит " внутри, их нужно экранировать:
+        // str.includes("'") ? `"${str.replace(/"/g, '\\"')}"` : `'${str}'`
+        // Но в большинстве случаев (особенно для путей к файлам) это не требуется.
         fullCommandArray = fullCommandArray.map(str => {
             if (str.includes("'")) {
                 return `"${str}"`;

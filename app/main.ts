@@ -35,8 +35,11 @@ async function run() {
         if (splitCommand.length === 1 && splitCommand[0] === 'testcustom') {
             try
             {
-                // const parser = new CommandParserLite('((asd(()((()))())))');
-                const testParser = new CommandParserLite('  as(d  \'ec( ho\' \'\'\'type\' asd \'  {}  \'   ) ');
+                // const testParser = new CommandParserLite('((asd(()((()))())))');
+                // const testParser = new CommandParserLite('  as(d  \'ec( ho\' \'\'\'type\' asd \'  {}  \'   ) ');
+                const testParser = new CommandParserLite('\'\"hello world\"\'');
+
+
                 testParser.parse();
                 console.log(testParser.getMaxDepth());
                 console.log(testParser.getOutput());
