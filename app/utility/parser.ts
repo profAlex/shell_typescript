@@ -79,6 +79,12 @@ export class CommandParserLite {
     private parseInsideCommand() :void {
         let tempStringInsideQuotes :string = '';
         while(!delimeters.has(this.input[this.pos]) && this.pos < this.inputLength) {
+            if(this.input[this.pos] === '\\' && (this.pos+1) < this.inputLength) {
+                this.pos += 1;
+            }
+            // else if(this.input[this.pos] === '\\' && (this.pos+1) === this.inputLength) {
+            //
+            // }
             tempStringInsideQuotes += this.input[this.pos];
             this.pos += 1;
         }
@@ -101,10 +107,12 @@ export class CommandParserLite {
 
         while (this.pos < this.inputLength) {
             switch((this.input)[this.pos]) {
+                // только в одном случае мы можем наткнуться на такой кейс, когда у нас начинается считывание новой команды, в остальных случаях этот символ встретится либо
                 case '\\':
-                    this.pos += 1;
-                    this.output.push((this.input)[this.pos]);
-                    this.pos += 1;
+                    // this.pos += 1;
+                    this.parseInsideCommand();
+                    // this.output.push((this.input)[this.pos]);
+                    // this.pos += 1;
 
                     break;
                 case '(':
