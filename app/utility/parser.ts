@@ -37,8 +37,8 @@ export class CommandParserLite {
     private parseInsideSingleQuotes():void {
         let tempStringInsideQuotes :string = '';
         while(this.input[this.pos] !== '\'' && this.pos < this.inputLength) {
-            if(this.input[this.pos] === '\\')
-                this.pos += 1;
+            // if(this.input[this.pos] === '\\')
+            //     this.pos += 1;
             tempStringInsideQuotes += this.input[this.pos];
             this.pos += 1;
         }
@@ -58,8 +58,8 @@ export class CommandParserLite {
     private parseInsideDoubleQuotes():void {
         let tempStringInsideQuotes :string = '';
         while(this.input[this.pos] !== '\"' && this.pos < this.inputLength) {
-            if(this.input[this.pos] === '\\')
-                this.pos += 1;
+            // if(this.input[this.pos] === '\\')
+            //     this.pos += 1;
             tempStringInsideQuotes += this.input[this.pos];
             this.pos += 1;
         }
