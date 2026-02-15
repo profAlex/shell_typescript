@@ -54,6 +54,8 @@ export class CommandParserLite {
     }
 
     private parseInsideDoubleQuotes(): void {
+        console.log("SECOND HERE!");
+
         let tempStringInsideQuotes: string = '';
         // символ " не требует экранирования символом \ когда мы рассматриваем его как отдельный символ
         // но при этом символ \ в любом случае надо экранировать: '\\' или "\\"
@@ -64,7 +66,7 @@ export class CommandParserLite {
             // \": escapes double quote, allowing " to appear literally within the quoted string.
             // \\: escapes backslash, resulting in a literal \.
             if (this.input[this.pos] === '\\'
-                && this.pos < (this.inputLength - 2)
+                && this.pos < (this.inputLength - 1)
                 && (this.input[this.pos + 1] === '"' || this.input[this.pos + 1] === '\\')) {
                 this.pos += 1;
             }
@@ -87,14 +89,19 @@ export class CommandParserLite {
     }
 
     private parseInsideCommand(): void {
+        console.log("FIRST HERE!");
+
         let tempStringInsideCommand: string = '';
         while (!delimiters.has(this.input[this.pos]) && this.pos < this.inputLength) {
             if (this.input[this.pos] === '\\' && (this.pos + 1) < this.inputLength) {
                 this.pos += 1;
+
+                tempStringInsideCommand += this.input[this.pos];
+                this.pos += 1;
             }
 
             // если попадаем на кавычку, то ее надо обработать отдельно, т.к. правила на парсинг внутри двойных кавычек для команды или пути отличаются от обычного
-            if (this.input[this.pos] === '"') {
+            else if (this.input[this.pos] === '"') {
                 tempStringInsideCommand += this.input[this.pos];
                 this.pos += 1;
 
@@ -108,7 +115,7 @@ export class CommandParserLite {
                     // \": escapes double quote, allowing " to appear literally within the quoted string.
                     // \\: escapes backslash, resulting in a literal \.
                     if (this.input[this.pos] === '\\'
-                        && this.pos < (this.inputLength - 2)
+                        && this.pos < (this.inputLength - 1)
                         && (this.input[this.pos + 1] === '"' || this.input[this.pos + 1] === '\\')) {
                         this.pos += 1;
                     }
@@ -124,7 +131,7 @@ export class CommandParserLite {
                 }
 
                 if (this.input[(this.pos)] !== '"') {
-                    throw new Error('Incorrect double quote sequence')
+                    throw new Error('Incorrect double quote sequence!!!!')
                 }
                 this.pos += 1;
             } else {
