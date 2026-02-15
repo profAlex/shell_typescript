@@ -11,7 +11,6 @@ export class CommandParserLite {
     private inputLength: number;
 
 
-
     constructor(input: string) {
         if (input.length > MAX_INPUT_LENGTH) {
             throw new Error(`Input must be less than ${MAX_INPUT_LENGTH} symbols`);
@@ -25,18 +24,17 @@ export class CommandParserLite {
         this.inputLength = input.trim().length;
     }
 
-    public parse():void {
+    public parse(): void {
         this.parseExpression('');
         // console.log(this.tempDepth);
-        if(this.tempDepth > 0)
-        {
+        if (this.tempDepth > 0) {
             throw new Error('It seems that expression has incorrect bracket sequence')
         }
     }
 
-    private parseInsideSingleQuotes():void {
-        let tempStringInsideQuotes :string = '';
-        while(this.input[this.pos] !== '\'' && this.pos < this.inputLength) {
+    private parseInsideSingleQuotes(): void {
+        let tempStringInsideQuotes: string = '';
+        while (this.input[this.pos] !== '\'' && this.pos < this.inputLength) {
             // if(this.input[this.pos] === '\\')
             //     this.pos += 1;
             tempStringInsideQuotes += this.input[this.pos];
@@ -55,24 +53,23 @@ export class CommandParserLite {
         return;
     }
 
-    private parseInsideDoubleQuotes():void {
-        let tempStringInsideQuotes :string = '';
+    private parseInsideDoubleQuotes(): void {
+        let tempStringInsideQuotes: string = '';
         // символ " не требует экранирования символом \ когда мы рассматриваем его как отдельный символ
         // но при этом символ \ в любом случае надо экранировать: '\\' или "\\"
-        while(this.input[this.pos] !== '"' && this.pos < this.inputLength) {
+        while (this.input[this.pos] !== '"' && this.pos < this.inputLength) {
 
             // этот блок if нужен для учета требования:
             //
             // \": escapes double quote, allowing " to appear literally within the quoted string.
             // \\: escapes backslash, resulting in a literal \.
-            if(this.input[this.pos] === '\\'
-                && this.pos < (this.inputLength-2)
-                && (this.input[this.pos+1] === '"' || this.input[this.pos+1] === '\\'))
-            {
+            if (this.input[this.pos] === '\\'
+                && this.pos < (this.inputLength - 2)
+                && (this.input[this.pos + 1] === '"' || this.input[this.pos + 1] === '\\')) {
                 this.pos += 1;
             }
-                // d\"
-                // 012
+            // d\"
+            // 012
             tempStringInsideQuotes += this.input[this.pos];
             this.pos += 1;
         }
@@ -89,19 +86,55 @@ export class CommandParserLite {
         return;
     }
 
-    private parseInsideCommand() :void {
-        let tempStringInsideQuotes :string = '';
-        while(!delimiters.has(this.input[this.pos]) && this.pos < this.inputLength) {
-            if(this.input[this.pos] === '\\' && (this.pos+1) < this.inputLength) {
+    private parseInsideCommand(): void {
+        let tempStringInsideCommand: string = '';
+        while (!delimiters.has(this.input[this.pos]) && this.pos < this.inputLength) {
+            if (this.input[this.pos] === '\\' && (this.pos + 1) < this.inputLength) {
                 this.pos += 1;
             }
 
-            tempStringInsideQuotes += this.input[this.pos];
-            this.pos += 1;
+            // если попадаем на кавычку, то ее надо обработать отдельно, т.к. правила на парсинг внутри двойных кавычек для команды или пути отличаются от обычного
+            if (this.input[this.pos] === '"') {
+                tempStringInsideCommand += this.input[this.pos];
+                this.pos += 1;
+
+                let tempStringInsideQuotes: string = '';
+                // символ " не требует экранирования символом \ когда мы рассматриваем его как отдельный символ
+                // но при этом символ \ в любом случае надо экранировать: '\\' или "\\"
+                while (this.input[this.pos] !== '"' && this.pos < this.inputLength) {
+
+                    // этот блок if нужен для учета требования:
+                    //
+                    // \": escapes double quote, allowing " to appear literally within the quoted string.
+                    // \\: escapes backslash, resulting in a literal \.
+                    if (this.input[this.pos] === '\\'
+                        && this.pos < (this.inputLength - 2)
+                        && (this.input[this.pos + 1] === '"' || this.input[this.pos + 1] === '\\')) {
+                        this.pos += 1;
+                    }
+                    // d\"
+                    // 012
+                    tempStringInsideQuotes += this.input[this.pos];
+                    this.pos += 1;
+                }
+
+                if (this.input[(this.pos)] === '"' && tempStringInsideQuotes.length !== 0) {
+                    tempStringInsideQuotes += this.input[this.pos];
+                    tempStringInsideCommand += tempStringInsideQuotes; // объединяем все то что было до начала кавычек и то что внутри с учетом правил парсинга внутри кавычек
+                }
+
+                if (this.input[(this.pos)] !== '"') {
+                    throw new Error('Incorrect double quote sequence')
+                }
+                this.pos += 1;
+            } else {
+                tempStringInsideCommand += this.input[this.pos];
+                this.pos += 1;
+            }
         }
 
-        if (tempStringInsideQuotes.length !== 0) {
-            this.output.push(tempStringInsideQuotes);
+        if (tempStringInsideCommand.length !== 0) {
+            this.output.push(tempStringInsideCommand);
         }
 
         return;
@@ -111,12 +144,12 @@ export class CommandParserLite {
     //TODO: здесь еще есть простор для оптимизации - каждый case с обычными и фигурными скобками
     // неверное можно обрабатывать в отдельном подметоде, который сам себя вызывает рекурсивно
     // что будет выглядеть опрятнее, наверное
-    private parseExpression(sentClosureBracketType :string): void {
+    private parseExpression(sentClosureBracketType: string): void {
         // this variable gives us a flag when we will have to exit current instance of parseExpression call
         let closureBracketType = sentClosureBracketType;
 
         while (this.pos < this.inputLength) {
-            switch((this.input)[this.pos]) {
+            switch ((this.input)[this.pos]) {
                 // только в одном случае мы можем наткнуться на такой кейс, когда у нас начинается считывание новой команды, в остальных случаях этот символ встретится либо
                 case '\\':
                     this.parseInsideCommand();
@@ -127,7 +160,7 @@ export class CommandParserLite {
                     this.pos += 1;
                     this.tempDepth += 1;
 
-                    if (this.tempDepth > MAX_INPUT_LENGTH/2) {
+                    if (this.tempDepth > MAX_INPUT_LENGTH / 2) {
                         throw new Error("Превышена максимальная глубина вложенности");
                     }
 
@@ -153,7 +186,7 @@ export class CommandParserLite {
                     this.pos += 1;
                     this.tempDepth += 1;
 
-                    if (this.tempDepth > MAX_INPUT_LENGTH/2) {
+                    if (this.tempDepth > MAX_INPUT_LENGTH / 2) {
                         throw new Error("Превышена максимальная глубина вложенности");
                     }
 
@@ -204,7 +237,7 @@ export class CommandParserLite {
         return this.maxDepth;
     }
 
-    public getOutput() :string[] {
+    public getOutput(): string[] {
         return this.output;
     }
 }
