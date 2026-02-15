@@ -62,6 +62,18 @@ async function run() {
 
         } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.echo) {
             const commandsToPrint = splitCommand.slice(1);
+
+            if (commandsToPrint[0] === ' ') {
+                //console.log(`0 elem: ${this.output[0]}`);
+                commandsToPrint.shift();
+            }
+
+            if (commandsToPrint[commandsToPrint.length-1] === ' ') {
+                //console.log(`last elem: ${this.output[this.output.length-1]}`);
+
+                commandsToPrint.pop();
+            }
+
             console.log(commandsToPrint.join(''));
         } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.type) {
             if (splitCommand[1] in AvaliableCommands) {
@@ -131,3 +143,4 @@ try {
 } catch (e) {
     console.error(`Error: ${e}`);
 }
+//echo "world'hello'\\'test"

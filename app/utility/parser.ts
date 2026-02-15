@@ -275,6 +275,17 @@ export class CommandParserLite {
     }
 
     public getOutput(): string[] {
+        // if (this.output[0] === ' ') {
+        //     console.log(`0 elem: ${this.output[0]}`);
+        //     this.output.shift();
+        // }
+        //
+        // if (this.output[this.output.length-1] === ' ') {
+        //     console.log(`last elem: ${this.output[this.output.length-1]}`);
+        //
+        //     this.output.pop();
+        // }
+
         return this.output;
     }
 }
