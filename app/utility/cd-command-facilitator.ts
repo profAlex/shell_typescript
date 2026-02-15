@@ -1,11 +1,8 @@
 import * as fs from 'fs';
-import { promisify } from 'util';
-
-// const access = promisify(fs.access);
 
 
 // function to check if the path exists and whether we have access to such a path
-function statPromise(path: string): Promise<fs.Stats> {
+async function statPromise(path: string): Promise<fs.Stats> {
     return new Promise((resolve, reject) => {
         fs.stat(path, (err, stats) => {
             if (err) {
@@ -33,39 +30,26 @@ export async function chdirWithChecks(path: string): Promise<void> {
             const homePath = process.env.HOME ?? undefined;
             if(!homePath || !(typeof homePath === 'string') || !(homePath.trim().length > 0)) {
                 // console.log(`cd: couldn't resolve HOME directory for ~ command`);
-
+                // возвращаемся, директория меняться не должна
                 return;
             }
 
             path = homePath;
         }
 
-        // более лайтовый вариант
-        // // Проверка существования
-        // await access(path, fs.constants.F_OK);
-        //
-        // // Проверка прав на запись
-        // await access(path, fs.constants.W_OK);
-
-        // проверки на наличие прав
-        const stats = await statPromise(path);
-        // if(!stats.isDirectory()) {
-        //     console.log(`cd: ${path}: No such file or directory`);
-        //     return;
-        // }
+         await statPromise(path);
     } catch (error) {
-        // именно такая реализация по условию задачи
+        // именно такая реализация по условию задачи, не нужно обрабатывать разные ошибки
         console.log(`cd: ${path}: No such file or directory`);
         return;
-
-        // throw new Error(`Ошибка проверки директории: ${error}`);
     }
 
     // Блокирующая операция смены директории
     try {
-        // const startTime = Date.now();
-
+        // данная команда корректно работает и с относительными путями ./ и ../
         process.chdir(path);
+
+        return;
 
         // Логирование времени блокировки (опционально)
         // console.log(`Смена директории заняла ${Date.now() - startTime} мс`);
@@ -75,6 +59,5 @@ export async function chdirWithChecks(path: string): Promise<void> {
         // }
     } catch (err) {
         console.log(`cd: ${path}: No such file or directory`);
-        // throw new Error(`Error while changing directory path ${path}: ${err}`);
     }
 }

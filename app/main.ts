@@ -1,27 +1,41 @@
-import { createInterface } from "readline";
-import { env } from 'process';
+import {createInterface} from "readline";
+import {env} from 'process';
 
 import {findExecutableInPath} from "./utility/find-executables.ts";
 import {AvaliableCommands} from "./types/avaliable-commands.ts";
-import {splitInputCommand} from "./utility/raw-command-splitter.ts";
-import {commandExecuteWIthPromise} from "./utility/command-executor.ts";
+// import {splitInputCommand} from "./utility/raw-command-splitter.ts";
+import {commandExecuteWithPromise} from "./utility/command-executor.ts";
 import {chdirWithChecks} from "./utility/cd-command-facilitator.ts";
 import {CommandParserLite} from "./utility/parser.ts";
 
 
 const rl = createInterface({
-  input: process.stdin,
-  output: process.stdout,
+    input: process.stdin,
+    output: process.stdout,
 });
 
 async function run() {
-    rl.question('$ ', async (command) => {
+
+    while (true) {
+
+        let command: string = await new Promise(resolve => {
+            rl.question('$ ', resolve);
+        });
 
         if (command.trim() === 'exit') {
             rl.close();
-            return;
+            return; // корректно завершаем функцию
         }
 
+        // rl.question('$ ', async (command) => {
+        //
+        //     if (command.trim() === 'exit') {
+        //         rl.close();
+        //         // exitFlag = true;
+        //         return;
+        //     }
+
+        // Quoted strings placed next to each other are concatenated to form a single argument.
         // remove '' cases from input string
         command = command.replace(/''+/g, '');
         // remove "" cases from input string
@@ -29,12 +43,11 @@ async function run() {
 
         const parser = new CommandParserLite(command);
         parser.parse();
-        const splitCommand :string[] = parser.getOutput();
+        const splitCommand: string[] = parser.getOutput();
         // console.log(splitCommand);
 
         if (splitCommand.length === 1 && splitCommand[0] === 'testcustom') {
-            try
-            {
+            try {
                 // const testParser = new CommandParserLite('((asd(()((()))())))');
                 // const testParser = new CommandParserLite('  as(d  \'ec( ho\' \'\'\'type\' asd \'  {}  \'   ) ');
                 const testParser = new CommandParserLite('\'\"hello world\"\'');
@@ -43,22 +56,18 @@ async function run() {
                 testParser.parse();
                 console.log(testParser.getMaxDepth());
                 console.log(testParser.getOutput());
-            }
-            catch (err) {
+            } catch (err) {
                 console.log(`${err}`);
             }
 
-        }
-        else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.echo) {
+        } else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.echo) {
             const commandsToPrint = splitCommand.slice(1);
             console.log(commandsToPrint.join(' '));
-        }
-        else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.type) {
+        } else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.type) {
             if (splitCommand[1] in AvaliableCommands) {
                 console.log(`${splitCommand[1]} is a shell builtin`);
-            }
-            else if (!(splitCommand[1] in AvaliableCommands)){
-                const executableName :string = splitCommand[1];
+            } else if (!(splitCommand[1] in AvaliableCommands)) {
+                const executableName: string = splitCommand[1];
                 const fullPath = await findExecutableInPath(executableName);
 
                 if (fullPath) {
@@ -66,40 +75,32 @@ async function run() {
                 } else {
                     console.log(`${executableName}: not found`);
                 }
-            }
-            else {
+            } else {
                 console.log(`${splitCommand[1]}: not found`);
             }
-        }
-        else if (splitCommand.length !== 0 && splitCommand[0] === AvaliableCommands.pwd) {
+        } else if (splitCommand.length !== 0 && splitCommand[0] === AvaliableCommands.pwd) {
             const currentWorkingDirectory = process.cwd();
             console.log(`${currentWorkingDirectory}`);
-        }
-        else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.cd) {
+        } else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.cd) {
             await chdirWithChecks(splitCommand[1]);
         }
-        // else if (splitCommand.length === 1 && splitCommand[0] === AvaliableCommands.tilda) {
-        //     const homePath = process.env.HOME ?? undefined;
-        //
-        //     if(homePath && (typeof homePath === 'string') && (homePath.trim().length > 0)) {
-        //         await chdirWithChecks(homePath);
-        //     }
+            // else if (splitCommand.length === 1 && splitCommand[0] === AvaliableCommands.tilda) {
+            //     const homePath = process.env.HOME ?? undefined;
+            //
+            //     if(homePath && (typeof homePath === 'string') && (homePath.trim().length > 0)) {
+            //         await chdirWithChecks(homePath);
+            //     }
         // }
 
         else if (splitCommand.length !== 0) {
-            const executableName :string = splitCommand[0];
+            const executableName: string = splitCommand[0];
             const fullPath = await findExecutableInPath(executableName);
 
             // console.log(`HERE`);
             if (fullPath) {
-                //console.log(`splitCommand ${splitCommand}`);
-
-
                 const args = splitCommand.slice(1);
-                //console.log(`ARGS ${args}`);
-                //console.log(splitCommand[0], splitCommand[1], splitCommand[2]);
 
-                const result = await commandExecuteWIthPromise(executableName, args, fullPath);
+                const result = await commandExecuteWithPromise(executableName, args, fullPath);
 
                 const {
                     isSuccessful,
@@ -110,29 +111,23 @@ async function run() {
 
                 if (returnedStdout) {
                     process.stdout.write(returnedStdout);
-                    // console.log(`${returnedStdout}\r`);
                 }
                 if (!isSuccessful) {
                     console.log(`${returnedStderr}`);
                     console.log(`${returnedError}`);
                 }
                 // TODO: тут еще обработать ошибки из result (на случай когда и если они появятся)
-            }
-            else {
+            } else {
                 console.log(`${command}: command not found`);
             }
-        }
-        else {
+        } else {
             console.log(`${command}: command not found`);
         }
-
-        await run();
-    });
+    }
 }
 
-try{
-    run();
-}
-catch(e){
+try {
+    await run();
+} catch (e) {
     console.error(`Error: ${e}`);
 }

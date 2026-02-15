@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8413b89-c7ef-4a79-a9e2-0a535539403e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utility/cd-command-facilitator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/utility/cd-command-facilitator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utility/command-executor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/utility/command-executor.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/utility/parser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/utility/parser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utility/raw-command-splitter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/utility/raw-command-splitter.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +20,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/app/utility/parser.ts" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -26,6 +34,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Node.js.cd-command-facilitator.ts.executor&quot;: &quot;Run&quot;,
     &quot;Node.js.main.ts.executor&quot;: &quot;Run&quot;,
     &quot;Node.js.parser.ts.executor&quot;: &quot;Debug&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -37,6 +46,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;ts.external.directory.path&quot;: &quot;/home/bb/Downloads/WebStorm-243.23654.157/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -60,7 +70,20 @@
       <workItem from="1765920271906" duration="233000" />
       <workItem from="1765954735047" duration="95000" />
       <workItem from="1766260552419" duration="2590000" />
-      <workItem from="1766263524587" duration="146000" />
+      <workItem from="1766263524587" duration="251000" />
+      <workItem from="1766413669972" duration="1856000" />
+      <workItem from="1766496383260" duration="320000" />
+      <workItem from="1770930890673" duration="1451000" />
+      <workItem from="1770963356392" duration="4800000" />
+      <workItem from="1771020481451" duration="2697000" />
+      <workItem from="1771023290076" duration="864000" />
+      <workItem from="1771071380036" duration="4555000" />
+      <workItem from="1771076025883" duration="1828000" />
+      <workItem from="1771147967174" duration="1843000" />
+      <workItem from="1771149919910" duration="567000" />
+      <workItem from="1771150797071" duration="1138000" />
+      <workItem from="1771152449327" duration="650000" />
+      <workItem from="1771153847337" duration="2469000" />
     </task>
     <servers />
   </component>

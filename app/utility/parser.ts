@@ -1,6 +1,6 @@
 const MAX_INPUT_LENGTH = 400;
 
-const delimeters = new Set([' ', '{', '}', '(', ')', '\'']);
+const delimiters = new Set([' ', '{', '}', '(', ')', '\'']);
 
 export class CommandParserLite {
     private input: string;
@@ -30,7 +30,7 @@ export class CommandParserLite {
         // console.log(this.tempDepth);
         if(this.tempDepth > 0)
         {
-            throw new Error('Incorrect bracket sequence')
+            throw new Error('It seems that expression has incorrect bracket sequence')
         }
     }
 
@@ -57,18 +57,30 @@ export class CommandParserLite {
 
     private parseInsideDoubleQuotes():void {
         let tempStringInsideQuotes :string = '';
-        while(this.input[this.pos] !== '\"' && this.pos < this.inputLength) {
-            // if(this.input[this.pos] === '\\')
-            //     this.pos += 1;
+        // символ " не требует экранирования символом \ когда мы рассматриваем его как отдельный символ
+        // но при этом символ \ в любом случае надо экранировать: '\\' или "\\"
+        while(this.input[this.pos] !== '"' && this.pos < this.inputLength) {
+
+            // этот блок if нужен для учета требования:
+            //
+            // \": escapes double quote, allowing " to appear literally within the quoted string.
+            // \\: escapes backslash, resulting in a literal \.
+            if(this.input[this.pos] === '\\'
+                && this.pos < (this.inputLength-1)
+                && (this.input[this.pos+1] === '"' || this.input[this.pos+1] === '\\'))
+            {
+                this.pos += 1;
+            }
+
             tempStringInsideQuotes += this.input[this.pos];
             this.pos += 1;
         }
 
-        if (this.input[(this.pos)] === '\"' && tempStringInsideQuotes.length !== 0) {
+        if (this.input[(this.pos)] === '"' && tempStringInsideQuotes.length !== 0) {
             this.output.push(tempStringInsideQuotes);
         }
 
-        if (this.input[(this.pos)] !== '\"') {
+        if (this.input[(this.pos)] !== '"') {
             throw new Error('Incorrect double quote sequence')
         }
 
@@ -78,13 +90,11 @@ export class CommandParserLite {
 
     private parseInsideCommand() :void {
         let tempStringInsideQuotes :string = '';
-        while(!delimeters.has(this.input[this.pos]) && this.pos < this.inputLength) {
+        while(!delimiters.has(this.input[this.pos]) && this.pos < this.inputLength) {
             if(this.input[this.pos] === '\\' && (this.pos+1) < this.inputLength) {
                 this.pos += 1;
             }
-            // else if(this.input[this.pos] === '\\' && (this.pos+1) === this.inputLength) {
-            //
-            // }
+
             tempStringInsideQuotes += this.input[this.pos];
             this.pos += 1;
         }
@@ -93,8 +103,6 @@ export class CommandParserLite {
             this.output.push(tempStringInsideQuotes);
         }
 
-        // если здесь прибавить - то пропустим след символ, а это применимо только в варианте когда мы считываем внутри одинарных кавычек
-        // this.pos += 1;
         return;
     }
 
@@ -102,21 +110,19 @@ export class CommandParserLite {
     //TODO: здесь еще есть простор для оптимизации - каждый case с обычными и фигурными скобками
     // неверное можно обрабатывать в отдельном подметоде, который сам себя вызывает рекурсивно
     // что будет выглядеть опрятнее, наверное
-    private parseExpression(sentBracketFlag :string): void {
-        let bracketFlag = sentBracketFlag;
+    private parseExpression(sentClosureBracketType :string): void {
+        // this variable gives us a flag when we will have to exit current instance of parseExpression call
+        let closureBracketType = sentClosureBracketType;
 
         while (this.pos < this.inputLength) {
             switch((this.input)[this.pos]) {
                 // только в одном случае мы можем наткнуться на такой кейс, когда у нас начинается считывание новой команды, в остальных случаях этот символ встретится либо
                 case '\\':
-                    // this.pos += 1;
                     this.parseInsideCommand();
-                    // this.output.push((this.input)[this.pos]);
-                    // this.pos += 1;
 
                     break;
                 case '(':
-                    // bracketFlag = 1;
+                    // closureBracketType = 1;
                     this.pos += 1;
                     this.tempDepth += 1;
 
@@ -132,10 +138,10 @@ export class CommandParserLite {
 
                     break;
                 case ')':
-                    if (bracketFlag !== '(') {
+                    if (closureBracketType !== '(') {
                         throw (new Error(`Incorrect ')' position`));
                     }
-                    if (bracketFlag === '(' && this.tempDepth === 0) {
+                    if (closureBracketType === '(' && this.tempDepth === 0) {
                         throw (new Error(`Incorrect ')' position`));
                     }
                     this.tempDepth -= 1;
@@ -158,10 +164,10 @@ export class CommandParserLite {
 
                     break;
                 case '}':
-                    if (bracketFlag !== '{') {
+                    if (closureBracketType !== '{') {
                         throw (new Error(`Incorrect '}' position`));
                     }
-                    if (bracketFlag === '{' && this.tempDepth === 0) {
+                    if (closureBracketType === '{' && this.tempDepth === 0) {
                         throw (new Error(`Incorrect '}' position`));
                     }
                     this.tempDepth -= 1;

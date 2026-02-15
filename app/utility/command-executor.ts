@@ -10,7 +10,7 @@ type execResult = {
     returnedError?: Error;
 };
 
-export async function commandExecuteWIthPromise(commandName :string, params :string[]=[], pathToTheCommand :string) :Promise<execResult> {
+export async function commandExecuteWithPromise(commandName :string, params :string[]=[], pathToTheCommand :string) :Promise<execResult> {
     let fullCommand :string = commandName;
 
     if (params.length > 0) {
