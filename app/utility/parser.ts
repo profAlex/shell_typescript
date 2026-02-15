@@ -130,7 +130,40 @@ export class CommandParserLite {
                 }
 
                 if (this.input[(this.pos)] !== '"') {
-                    throw new Error('Incorrect double quote sequence!!!!')
+                    throw new Error('Incorrect double quote sequence')
+                }
+                this.pos += 1;
+            } else if (this.input[this.pos] === '\'') {
+                // tempStringInsideCommand += this.input[this.pos];
+                this.pos += 1;
+
+                let tempStringInsideQuotes: string = '';
+                // символ " не требует экранирования символом \ когда мы рассматриваем его как отдельный символ
+                // но при этом символ \ в любом случае надо экранировать: '\\' или "\\"
+                while (this.input[this.pos] !== '\'' && this.pos < this.inputLength) {
+
+                    // этот блок if нужен для учета требования:
+                    //
+                    // \": escapes double quote, allowing " to appear literally within the quoted string.
+                    // \\: escapes backslash, resulting in a literal \.
+                    if (this.input[this.pos] === '\\'
+                        && this.pos < (this.inputLength - 1))
+                        // && (this.input[this.pos + 1] === '"' || this.input[this.pos + 1] === '\\'))
+                    {
+                        this.pos += 1;
+                    }
+
+                    tempStringInsideQuotes += this.input[this.pos];
+                    this.pos += 1;
+                }
+
+                if (this.input[(this.pos)] === '\'' && tempStringInsideQuotes.length !== 0) {
+                    //tempStringInsideQuotes += this.input[this.pos];
+                    tempStringInsideCommand += tempStringInsideQuotes; // объединяем все то что было до начала кавычек и то что внутри с учетом правил парсинга внутри кавычек
+                }
+
+                if (this.input[(this.pos)] !== '\'') {
+                    throw new Error('Incorrect single quote sequence')
                 }
                 this.pos += 1;
             } else {
