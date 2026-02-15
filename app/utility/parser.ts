@@ -70,8 +70,7 @@ export class CommandParserLite {
                 && (this.input[this.pos + 1] === '"' || this.input[this.pos + 1] === '\\')) {
                 this.pos += 1;
             }
-            // d\"
-            // 012
+
             tempStringInsideQuotes += this.input[this.pos];
             this.pos += 1;
         }
@@ -101,6 +100,7 @@ export class CommandParserLite {
             }
 
             // если попадаем на кавычку, то ее надо обработать отдельно, т.к. правила на парсинг внутри двойных кавычек для команды или пути отличаются от обычного
+            // например для команды cat: /tmp/ant/"number 89" послать на исполнение надо: cat /tmp/ant/number 89
             else if (this.input[this.pos] === '"') {
                 // tempStringInsideCommand += this.input[this.pos];
                 this.pos += 1;
@@ -119,8 +119,7 @@ export class CommandParserLite {
                         && (this.input[this.pos + 1] === '"' || this.input[this.pos + 1] === '\\')) {
                         this.pos += 1;
                     }
-                    // d\"
-                    // 012
+
                     tempStringInsideQuotes += this.input[this.pos];
                     this.pos += 1;
                 }
