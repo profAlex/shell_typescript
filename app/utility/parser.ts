@@ -163,11 +163,11 @@ export class CommandParserLite {
             }
         }
 
-        if (this.input[this.pos] === ' ')
-        {
-            //console.log("HERE");
-            tempStringInsideCommand = tempStringInsideCommand + ' ';
-        }
+        // if (this.input[this.pos] === ' ')
+        // {
+        //     //console.log("HERE");
+        //     tempStringInsideCommand = tempStringInsideCommand + ' ';
+        // }
 
         if (tempStringInsideCommand.length !== 0) {
             this.output.push(tempStringInsideCommand);
@@ -255,6 +255,7 @@ export class CommandParserLite {
 
                     break;
                 case ' ':
+                    this.output.push(' ');
                     this.pos += 1;
                     break;
                 default:
