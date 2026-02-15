@@ -1,6 +1,7 @@
 const MAX_INPUT_LENGTH = 400;
 
-const delimiters = new Set([' ', '{', '}', '(', ')', '\'']);
+// const delimiters = new Set([' ', '{', '}', '(', ')', '\'']);
+const delimiters = new Set([' ', '{', '}', '(', ')']);
 
 export class CommandParserLite {
     private input: string;
@@ -99,7 +100,7 @@ export class CommandParserLite {
                 this.pos += 1;
             }
 
-            // если попадаем на кавычку, то ее надо обработать отдельно, т.к. правила на парсинг внутри двойных кавычек для команды или пути отличаются от обычного
+                // если попадаем на кавычку, то ее надо обработать отдельно, т.к. правила на парсинг внутри двойных кавычек для команды или пути отличаются от обычного
             // например для команды cat: /tmp/ant/"number 89" послать на исполнение надо: cat /tmp/ant/number 89
             else if (this.input[this.pos] === '"') {
                 // tempStringInsideCommand += this.input[this.pos];
