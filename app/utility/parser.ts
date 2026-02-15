@@ -66,12 +66,13 @@ export class CommandParserLite {
             // \": escapes double quote, allowing " to appear literally within the quoted string.
             // \\: escapes backslash, resulting in a literal \.
             if(this.input[this.pos] === '\\'
-                && this.pos < (this.inputLength-1)
+                && this.pos < (this.inputLength-2)
                 && (this.input[this.pos+1] === '"' || this.input[this.pos+1] === '\\'))
             {
                 this.pos += 1;
             }
-
+                // d\"
+                // 012
             tempStringInsideQuotes += this.input[this.pos];
             this.pos += 1;
         }
