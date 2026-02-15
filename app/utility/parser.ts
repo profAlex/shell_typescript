@@ -143,17 +143,7 @@ export class CommandParserLite {
                 // но при этом символ \ в любом случае надо экранировать: '\\' или "\\"
                 while (this.input[this.pos] !== '\'' && this.pos < this.inputLength) {
 
-                    // этот блок if нужен для учета требования:
-                    //
-                    // \": escapes double quote, allowing " to appear literally within the quoted string.
-                    // \\: escapes backslash, resulting in a literal \.
-                    if (this.input[this.pos] === '\\'
-                        && this.pos < (this.inputLength - 1))
-                        // && (this.input[this.pos + 1] === '"' || this.input[this.pos + 1] === '\\'))
-                    {
-                        this.pos += 1;
-                    }
-
+                    // Backslashes have no special escaping behavior inside single quotes. Every character (including backslashes) within single quotes is treated literally.
                     tempStringInsideQuotes += this.input[this.pos];
                     this.pos += 1;
                 }
