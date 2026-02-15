@@ -60,10 +60,10 @@ async function run() {
                 console.log(`${err}`);
             }
 
-        } else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.echo) {
+        } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.echo) {
             const commandsToPrint = splitCommand.slice(1);
-            console.log(commandsToPrint.join(' '));
-        } else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.type) {
+            console.log(commandsToPrint.join(''));
+        } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.type) {
             if (splitCommand[1] in AvaliableCommands) {
                 console.log(`${splitCommand[1]} is a shell builtin`);
             } else if (!(splitCommand[1] in AvaliableCommands)) {
@@ -78,10 +78,10 @@ async function run() {
             } else {
                 console.log(`${splitCommand[1]}: not found`);
             }
-        } else if (splitCommand.length !== 0 && splitCommand[0] === AvaliableCommands.pwd) {
+        } else if (splitCommand.length !== 0 && splitCommand[0].trim() === AvaliableCommands.pwd) {
             const currentWorkingDirectory = process.cwd();
             console.log(`${currentWorkingDirectory}`);
-        } else if (splitCommand.length > 1 && splitCommand[0] === AvaliableCommands.cd) {
+        } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.cd) {
             await chdirWithChecks(splitCommand[1]);
         }
             // else if (splitCommand.length === 1 && splitCommand[0] === AvaliableCommands.tilda) {

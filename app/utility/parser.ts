@@ -163,6 +163,12 @@ export class CommandParserLite {
             }
         }
 
+        if (this.input[this.pos] === ' ')
+        {
+            console.log("HERE");
+            tempStringInsideCommand = tempStringInsideCommand + ' ';
+        }
+
         if (tempStringInsideCommand.length !== 0) {
             this.output.push(tempStringInsideCommand);
         }
