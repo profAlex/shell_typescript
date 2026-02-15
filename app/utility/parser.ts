@@ -54,7 +54,7 @@ export class CommandParserLite {
     }
 
     private parseInsideDoubleQuotes(): void {
-        console.log("SECOND HERE!");
+        //console.log("SECOND HERE!");
 
         let tempStringInsideQuotes: string = '';
         // символ " не требует экранирования символом \ когда мы рассматриваем его как отдельный символ
@@ -89,7 +89,7 @@ export class CommandParserLite {
     }
 
     private parseInsideCommand(): void {
-        console.log("FIRST HERE!");
+        //console.log("FIRST HERE!");
 
         let tempStringInsideCommand: string = '';
         while (!delimiters.has(this.input[this.pos]) && this.pos < this.inputLength) {
