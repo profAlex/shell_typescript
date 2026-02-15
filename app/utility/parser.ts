@@ -102,7 +102,7 @@ export class CommandParserLite {
 
             // если попадаем на кавычку, то ее надо обработать отдельно, т.к. правила на парсинг внутри двойных кавычек для команды или пути отличаются от обычного
             else if (this.input[this.pos] === '"') {
-                tempStringInsideCommand += this.input[this.pos];
+                // tempStringInsideCommand += this.input[this.pos];
                 this.pos += 1;
 
                 let tempStringInsideQuotes: string = '';
@@ -126,7 +126,7 @@ export class CommandParserLite {
                 }
 
                 if (this.input[(this.pos)] === '"' && tempStringInsideQuotes.length !== 0) {
-                    tempStringInsideQuotes += this.input[this.pos];
+                    //tempStringInsideQuotes += this.input[this.pos];
                     tempStringInsideCommand += tempStringInsideQuotes; // объединяем все то что было до начала кавычек и то что внутри с учетом правил парсинга внутри кавычек
                 }
 
