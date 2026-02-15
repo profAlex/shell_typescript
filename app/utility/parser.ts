@@ -165,7 +165,7 @@ export class CommandParserLite {
 
         if (this.input[this.pos] === ' ')
         {
-            console.log("HERE");
+            //console.log("HERE");
             tempStringInsideCommand = tempStringInsideCommand + ' ';
         }
 
