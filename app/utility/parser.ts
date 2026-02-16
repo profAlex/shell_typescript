@@ -1,7 +1,7 @@
 const MAX_INPUT_LENGTH = 400;
 
 // const delimiters = new Set([' ', '{', '}', '(', ')', '\'']);
-const delimiters = new Set([' ', '{', '}', '(', ')']);
+const delimiters = new Set([' ']);
 
 export class CommandParserLite {
     private input: string;
@@ -10,6 +10,7 @@ export class CommandParserLite {
     private pos: number;
     private output: string[];
     private inputLength: number;
+    private tempTokenStorage: string;
 
 
     constructor(input: string) {
@@ -23,6 +24,7 @@ export class CommandParserLite {
         this.pos = 0;
         this.output = [];
         this.inputLength = input.trim().length;
+        this.tempTokenStorage = '';
     }
 
     public parse(): void {
@@ -43,7 +45,8 @@ export class CommandParserLite {
         }
 
         if (this.input[(this.pos)] === '\'' && tempStringInsideQuotes.length !== 0) {
-            this.output.push(tempStringInsideQuotes);
+            // this.output.push(tempStringInsideQuotes);
+            this.tempTokenStorage += tempStringInsideQuotes;
         }
 
         if (this.input[(this.pos)] !== '\'') {
@@ -77,7 +80,9 @@ export class CommandParserLite {
         }
 
         if (this.input[(this.pos)] === '"' && tempStringInsideQuotes.length !== 0) {
-            this.output.push(tempStringInsideQuotes);
+            this.tempTokenStorage += tempStringInsideQuotes;
+
+            // this.output.push(tempStringInsideQuotes);
         }
 
         if (this.input[(this.pos)] !== '"') {
@@ -170,7 +175,9 @@ export class CommandParserLite {
         // }
 
         if (tempStringInsideCommand.length !== 0) {
-            this.output.push(tempStringInsideCommand);
+            this.tempTokenStorage += tempStringInsideCommand;
+            this.output.push(this.tempTokenStorage);
+            this.tempTokenStorage = '';
         }
 
         return;
@@ -255,7 +262,9 @@ export class CommandParserLite {
 
                     break;
                 case ' ':
-                    this.output.push(' ');
+                    this.output.push(this.tempTokenStorage);
+                    this.tempTokenStorage = '';
+
                     this.pos += 1;
                     break;
                 default:
@@ -267,6 +276,10 @@ export class CommandParserLite {
 
                     break;
             }
+        }
+        if (this.tempTokenStorage.length !== 0) {
+            this.output.push(this.tempTokenStorage);
+            this.tempTokenStorage = '';
         }
     }
 
