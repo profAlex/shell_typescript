@@ -262,8 +262,10 @@ export class CommandParserLite {
 
                     break;
                 case ' ':
-                    this.output.push(this.tempTokenStorage);
-                    this.tempTokenStorage = '';
+                    if (this.tempTokenStorage.length !== 0) {
+                        this.output.push(this.tempTokenStorage);
+                        this.tempTokenStorage = '';
+                    }
 
                     this.pos += 1;
                     break;

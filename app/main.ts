@@ -74,7 +74,7 @@ async function run() {
             //     commandsToPrint.pop();
             // }
 
-            console.log(commandsToPrint.join(''));
+            console.log(commandsToPrint.join(' '));
         } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.type) {
             if (splitCommand[1] in AvaliableCommands) {
                 console.log(`${splitCommand[1]} is a shell builtin`);
@@ -143,6 +143,7 @@ try {
 } catch (e) {
     console.error(`Error: ${e}`);
 }
-//echo "world'hello'\\'test"
-//echo "test\"insidequotes"shell\"
+// echo "world'hello'\\'test"
+// echo "test\"insidequotes"shell\"
 // cat /tmp/bee/"number 40" /tmp/bee/"doublequote \" 34" /tmp/bee/"backslash \\ 61"
+// cat /tmp/rat/"number 38"
