@@ -111,10 +111,10 @@ async function run() {
                 }
                 // TODO: тут еще обработать ошибки из result (на случай когда и если они появятся)
             } else {
-                console.log(`${command}: command not found`);
+                console.log(`${splitCommand[0]}: command not found`);
             }
         } else {
-            console.log(`${command}: command not found`);
+            console.log(`${splitCommand[0]}: command not found`);
         }
     }
 }
@@ -128,3 +128,4 @@ try {
 // echo "test\"insidequotes"shell\"
 // cat /tmp/bee/"number 40" /tmp/bee/"doublequote \" 34" /tmp/bee/"backslash \\ 61"
 // cat /tmp/rat/"number 38"
+// 'exe  with  space' /tmp/owl/f1
