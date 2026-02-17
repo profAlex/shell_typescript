@@ -15,12 +15,12 @@ async function isFileExecutable(filePath: string): Promise<boolean> {
             return false;
         }
 
-        const mode = stats.mode;
-        return (
-            (mode & constants.S_IXUSR) !== 0 || // Для владельца
-            (mode & constants.S_IXGRP) !== 0 || // Для группы
-            (mode & constants.S_IXOTH) !== 0    // Для других
-        );
+        // const mode = stats.mode;
+        // return (
+        //     (mode & constants.S_IXUSR) !== 0 || // Для владельца
+        //     (mode & constants.S_IXGRP) !== 0 || // Для группы
+        //     (mode & constants.S_IXOTH) !== 0    // Для других
+        // );
     }
     catch {
         return false;
