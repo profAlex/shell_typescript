@@ -66,10 +66,10 @@ async function run() {
                 if (fullPath) {
                     console.log(`${executableName} is ${fullPath}`);
                 } else {
-                    console.log(`${executableName}: not found`);
+                    console.log(`${executableName}: not found!!!!`);
                 }
             } else {
-                console.log(`${splitCommand[1]}: not found`);
+                console.log(`${splitCommand[1]}: not found!!!!`);
             }
         } else if (splitCommand.length !== 0 && splitCommand[0].trim() === AvaliableCommands.pwd) {
             const currentWorkingDirectory = process.cwd();
