@@ -15,6 +15,7 @@ async function isFileExecutable(filePath: string): Promise<boolean> {
             return false;
         }
 
+        return true;
         // const mode = stats.mode;
         // return (
         //     (mode & constants.S_IXUSR) !== 0 || // Для владельца
