@@ -87,6 +87,8 @@ async function run() {
 
         else if (splitCommand.length !== 0) {
             const executableName: string = splitCommand[0];
+            // console.log("test:", splitCommand[0]);
+
             const fullPath = await findExecutableInPath(executableName);
 
             // console.log(`HERE`);
