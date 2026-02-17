@@ -10,6 +10,11 @@ export class CommandParserLite {
     private pos: number;
     private output: string[];
     private inputLength: number;
+
+    // токены (или отдельные команды) разделяются пробелом (см.delimiters), кроме случаев, когда пробел внутри двойных или одинарных кавычек
+    // в противном случае распознанное выражение-токен (единичный субъект, который может быть передан в виде аргумента в функцию или выведен на экран)
+    // накапливается в этой переменной, и записывается в массив this.output уже как отдельный токен либо
+    // когда мы встречаем пробел за пределами обработки кавычек-команды. либо когда мы заканчиваем обрабатываеть команду
     private tempTokenStorage: string;
 
 
@@ -57,9 +62,8 @@ export class CommandParserLite {
         return;
     }
 
-    private parseInsideDoubleQuotes(): void {
-        //console.log("SECOND HERE!");
 
+    private parseInsideDoubleQuotes(): void {
         let tempStringInsideQuotes: string = '';
         // символ " не требует экранирования символом \ когда мы рассматриваем его как отдельный символ
         // но при этом символ \ в любом случае надо экранировать: '\\' или "\\"
@@ -81,8 +85,6 @@ export class CommandParserLite {
 
         if (this.input[(this.pos)] === '"' && tempStringInsideQuotes.length !== 0) {
             this.tempTokenStorage += tempStringInsideQuotes;
-
-            // this.output.push(tempStringInsideQuotes);
         }
 
         if (this.input[(this.pos)] !== '"') {
@@ -94,8 +96,6 @@ export class CommandParserLite {
     }
 
     private parseInsideCommand(): void {
-        //console.log("FIRST HERE!");
-
         let tempStringInsideCommand: string = '';
         while (!delimiters.has(this.input[this.pos]) && this.pos < this.inputLength) {
             if (this.input[this.pos] === '\\' && (this.pos + 1) < this.inputLength) {
@@ -105,7 +105,8 @@ export class CommandParserLite {
                 this.pos += 1;
             }
 
-                // если попадаем на кавычку, то ее надо обработать отдельно, т.к. правила на парсинг внутри двойных кавычек для команды или пути отличаются от обычного
+            // если попадаем на кавычку внутри обработчика команды, то ее надо обработать отдельно, т.к. правила на парсинг внутри двойных кавычек
+            // для команды или пути отличаются от обычного
             // например для команды cat: /tmp/ant/"number 89" послать на исполнение надо: cat /tmp/ant/number 89
             else if (this.input[this.pos] === '"') {
                 // tempStringInsideCommand += this.input[this.pos];
@@ -131,7 +132,6 @@ export class CommandParserLite {
                 }
 
                 if (this.input[(this.pos)] === '"' && tempStringInsideQuotes.length !== 0) {
-                    //tempStringInsideQuotes += this.input[this.pos];
                     tempStringInsideCommand += tempStringInsideQuotes; // объединяем все то что было до начала кавычек и то что внутри с учетом правил парсинга внутри кавычек
                 }
 
@@ -140,12 +140,10 @@ export class CommandParserLite {
                 }
                 this.pos += 1;
             } else if (this.input[this.pos] === '\'') {
-                // tempStringInsideCommand += this.input[this.pos];
                 this.pos += 1;
 
                 let tempStringInsideQuotes: string = '';
-                // символ " не требует экранирования символом \ когда мы рассматриваем его как отдельный символ
-                // но при этом символ \ в любом случае надо экранировать: '\\' или "\\"
+                // символ ' требует экранирования символом \ когда мы рассматриваем его как отдельный символ
                 while (this.input[this.pos] !== '\'' && this.pos < this.inputLength) {
 
                     // Backslashes have no special escaping behavior inside single quotes. Every character (including backslashes) within single quotes is treated literally.
@@ -154,7 +152,6 @@ export class CommandParserLite {
                 }
 
                 if (this.input[(this.pos)] === '\'' && tempStringInsideQuotes.length !== 0) {
-                    //tempStringInsideQuotes += this.input[this.pos];
                     tempStringInsideCommand += tempStringInsideQuotes; // объединяем все то что было до начала кавычек и то что внутри с учетом правил парсинга внутри кавычек
                 }
 
@@ -167,12 +164,6 @@ export class CommandParserLite {
                 this.pos += 1;
             }
         }
-
-        // if (this.input[this.pos] === ' ')
-        // {
-        //     //console.log("HERE");
-        //     tempStringInsideCommand = tempStringInsideCommand + ' ';
-        // }
 
         if (tempStringInsideCommand.length !== 0) {
             this.tempTokenStorage += tempStringInsideCommand;
