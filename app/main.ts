@@ -131,3 +131,5 @@ try {
 // cat /tmp/bee/"number 40" /tmp/bee/"doublequote \" 34" /tmp/bee/"backslash \\ 61"
 // cat /tmp/rat/"number 38"
 // 'exe  with  space' /tmp/owl/f1
+// ‘exe  with  space’ /tmp/pig/f1
+// 'exe  with  space' /tmp/pig/f1

@@ -66,13 +66,13 @@ export async function findExecutableInPath(fileName: string): Promise<string | n
 
     // здесь теоретически должна быть проверка на то содержится ли допустимое
     // расширение файла для Windows в переданном названии файла 'fileString'
-    console.log("COMMAND NAME RECEIVED:", fileName);
+    // console.log("COMMAND NAME RECEIVED:", fileName);
 
     for (const dir of pathDirectories) {
         // const fullPath = join(dir, "\"" + fileName + "\"");
         // const fullPath = join(dir, fileName);
         const fullPath = path.resolve(dir, fileName);
-        console.log("FULL PATH TESTED:", fullPath);
+        // console.log("FULL PATH TESTED:", fullPath);
 
         if (await isFileExecutable(fullPath)) {
             return fullPath;

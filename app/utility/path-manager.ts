@@ -1,6 +1,7 @@
 export class PathManager {
     private static getSeparator(): string {
-        return process.platform === 'win32' ? ';' : ':';
+        // return process.platform === 'win32' ? ';' : ':';
+        return process.platform.startsWith('win') ? ';' : ':';
     }
 
     static addDirectory(directory: string): void {
