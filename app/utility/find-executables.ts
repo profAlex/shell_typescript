@@ -2,6 +2,7 @@ import {join} from "path";
 import {constants, stat} from "fs";
 import {promisify} from "util";
 import {PathManager} from "./path-manager.ts";
+import * as path from "node:path";
 
 
 const statPromise = promisify(stat);
@@ -52,8 +53,11 @@ export async function findExecutableInPath(fileName: string): Promise<string | n
     // расширение файла для Windows в переданном названии файла 'fileString'
 
     for (const dir of pathDirectories) {
-        // for (const name of fileNames) {
-        const fullPath = join(dir, fileName);
+        // const fullPath = join(dir, "\"" + fileName + "\"");
+        // const fullPath = join(dir, fileName);
+        const fullPath = path.resolve(dir, fileName);
+        // console.log("FULL PATH: ", fullPath);
+
         if (await isFileExecutable(fullPath)) {
             return fullPath;
             //    }
