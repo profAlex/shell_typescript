@@ -3,7 +3,6 @@ import {access, stat} from "fs";
 import {promisify} from "util";
 import {PathManager} from "./path-manager.ts";
 import * as path from "node:path";
-
 import { constants } from 'fs/promises';
 
 
@@ -11,19 +10,18 @@ import { constants } from 'fs/promises';
 //
 // async function isFileExecutable(filePath: string): Promise<boolean> {
 //     try {
-//         const stats = await statPromconstantsise(filePath);
+//         const stats = await statPromise(filePath);
 //
 //         if (!stats.isFile()) {
 //             return false;
 //         }
 //
-//         return true;
-//         // const mode = stats.mode;
-//         // return (
-//         //     (mode & constants.S_IXUSR) !== 0 || // Для владельца
-//         //     (mode & constants.S_IXGRP) !== 0 || // Для группы
-//         //     (mode & constants.S_IXOTH) !== 0    // Для других
-//         // );
+        // const mode = stats.mode;
+        // return (
+        //     (mode & constants.S_IXUSR) !== 0 || // Для владельца
+        //     (mode & constants.S_IXGRP) !== 0 || // Для группы
+        //     (mode & constants.S_IXOTH) !== 0    // Для других
+        // );
 //     }
 //     catch {
 //         return false;
@@ -60,9 +58,9 @@ export async function findExecutableInPath(fileName: string): Promise<string | n
     // должны по логике указывать и расширение, если подразумевается, что мы работаем в
     // платформе Windows
     // // Для Windows добавляем возможные расширения
-    // const fileNames = process.platform === 'win32'
+    // const fileNames = process.platform.startsWith('win')
     //     ? getWindowsExecutablePaths(fileName)
-    //     : [fileName];
+    //     : fileName;
 
     // здесь теоретически должна быть проверка на то содержится ли допустимое
     // расширение файла для Windows в переданном названии файла 'fileString'

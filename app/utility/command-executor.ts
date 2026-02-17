@@ -29,7 +29,7 @@ export async function commandExecuteWithPromise(commandName :string, params :str
 
         fullCommand = [fullCommand, ...fullCommandArray].join(' ');
 
-        // console.log("--- fullCommand DEBUG:", fullCommand);
+        console.log("--- fullCommand DEBUG:", fullCommand);
     }
 
     return new Promise((resolve, reject) => {
