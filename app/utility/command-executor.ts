@@ -54,7 +54,6 @@ type execResult = {
 export async function commandExecuteWithPromise(
     commandName: string,
     params: string[] = [],
-    pathToTheCommand: string
 ): Promise<execResult> {
     return new Promise((resolve, reject) => {
         // Экранирование параметров
@@ -68,8 +67,9 @@ export async function commandExecuteWithPromise(
 
         execFile(
             commandName, // только имя исполняемого файла
-            escapedParams, // массив параметров
-            { cwd: dirname(pathToTheCommand) },
+            // escapedParams, // массив параметров
+            params,
+            // { cwd: dirname(pathToTheCommand) },
             (error: Error | null, stdout: string, stderr: string) => {
                 if (error) {
                     resolve({

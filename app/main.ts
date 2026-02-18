@@ -90,7 +90,8 @@ async function run() {
             if (fullPath) {
                 const args = splitCommand.slice(1);
 
-                const result = await commandExecuteWithPromise(executableName, args, fullPath);
+                // const result = await commandExecuteWithPromise(executableName, args, fullPath);
+                const result = await commandExecuteWithPromise(executableName, args);
 
                 const {
                     isSuccessful,
