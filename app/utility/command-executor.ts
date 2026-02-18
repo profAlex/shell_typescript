@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec, execFile} from 'child_process';
 import { dirname } from 'path';
 import {CommandParserLite} from "./parser.ts";
 
@@ -33,7 +33,7 @@ export async function commandExecuteWithPromise(commandName :string, params :str
     }
 
     return new Promise((resolve, reject) => {
-        exec(fullCommand, {cwd: dirname(pathToTheCommand)}, (error :Error|null, stdout :string, stderr :string) => {
+        execFile(fullCommand, {cwd: dirname(pathToTheCommand)}, (error :Error|null, stdout :string, stderr :string) => {
             if(error){
                 resolve({
                     isSuccessful: false,
