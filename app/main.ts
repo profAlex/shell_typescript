@@ -1,9 +1,7 @@
 import {createInterface} from "readline";
-import {env} from 'process';
 
 import {findExecutableInPath} from "./utility/find-executables.ts";
 import {AvaliableCommands} from "./types/avaliable-commands.ts";
-// import {splitInputCommand} from "./utility/raw-command-splitter.ts";
 import {commandExecuteWithPromise} from "./utility/command-executor.ts";
 import {chdirWithChecks} from "./utility/cd-command-facilitator.ts";
 import {CommandParserLite} from "./utility/parser.ts";
@@ -27,10 +25,7 @@ async function run() {
             return; // корректно завершаем функцию
         }
 
-        // Quoted strings placed next to each other are concatenated to form a single argument.
-        // remove '' cases from input string
         command = command.replace(/''+/g, '');
-        // remove "" cases from input string
         command = command.replace(/""+/g, '');
 
         const parser = new CommandParserLite(command);
