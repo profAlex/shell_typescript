@@ -103,10 +103,10 @@ async function run() {
                 if (returnedStdout) {
                     process.stdout.write(returnedStdout);
                 }
-                if (!isSuccessful) {
-                    console.log(`${returnedStderr}`);
-                    console.log(`${returnedError}`);
-                }
+                // if (!isSuccessful) {
+                //     console.log(`${returnedStderr}`);
+                //     console.log(`${returnedError}`);
+                // }
                 // TODO: тут еще обработать ошибки из result (на случай когда и если они появятся)
             } else {
                 console.log(`${splitCommand[0]}: command not found`);
