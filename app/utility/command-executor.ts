@@ -57,13 +57,13 @@ export async function commandExecuteWithPromise(
 ): Promise<execResult> {
     return new Promise((resolve, reject) => {
         // Экранирование параметров
-        const escapedParams = params.map(str => {
-            if (str.includes("'")) {
-                return `"${str}"`;
-            } else {
-                return `'${str}'`;
-            }
-        });
+        // const escapedParams = params.map(str => {
+        //     if (str.includes("'")) {
+        //         return `"${str}"`;
+        //     } else {
+        //         return `'${str}'`;
+        //     }
+        // });
 
         execFile(
             commandName, // только имя исполняемого файла
