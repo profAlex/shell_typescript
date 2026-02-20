@@ -68,7 +68,7 @@ export async function commandExecuteWithPromise(
         execFile(
             commandName, // только имя исполняемого файла
             // escapedParams, // массив параметров
-            escapedParams,
+            params,
             // { cwd: dirname(pathToTheCommand) },
             (error: Error | null, stdout: string, stderr: string) => {
                 if (error) {
