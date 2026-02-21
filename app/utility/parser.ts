@@ -261,11 +261,7 @@ export class CommandParserLite {
                     this.pos += 1;
                     break;
                 default:
-                    // это не нужно т.к. мы начинаем считывать с самого начала а не как в варианте с одинарными кавычками со следующего после кавычек
-                    // this.pos += 1;
-
                     this.parseInsideCommand();
-                    // this.pos += 1;
 
                     break;
             }

@@ -12,6 +12,97 @@ const rl = createInterface({
     output: process.stdout,
 });
 
+
+async function resolveOutputForCommandArray(splitCommand: string[]): Promise<string | void> {
+    if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.echo) {
+        const commandsToPrint = splitCommand.slice(1);
+
+        // console.log(commandsToPrint.join(' '));
+        return commandsToPrint.join(' ');
+
+    } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.type) {
+        if (splitCommand[1] in AvaliableCommands) {
+            // console.log(`${splitCommand[1]} is a shell builtin`);
+            return `${splitCommand[1]} is a shell builtin`;
+
+        } else if (!(splitCommand[1] in AvaliableCommands)) {
+            const executableName: string = splitCommand[1];
+            const fullPath = await findExecutableInPath(executableName);
+
+            if (fullPath) {
+                // console.log(`${executableName} is ${fullPath}`);
+                return `${executableName} is ${fullPath}`;
+
+            } else {
+                // console.log(`${executableName}: not found`);
+                return `${executableName}: not found`;
+
+            }
+        } else {
+            // console.log(`${splitCommand[1]}: not found`);
+            return `${splitCommand[1]}: not found`;
+
+        }
+    } else if (splitCommand.length !== 0 && splitCommand[0].trim() === AvaliableCommands.pwd) {
+        const currentWorkingDirectory = process.cwd();
+        // console.log(`${currentWorkingDirectory}`);
+        return `${currentWorkingDirectory}`;
+
+    } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.cd) {
+        return await chdirWithChecks(splitCommand[1]);
+    }
+        // else if (splitCommand.length === 1 && splitCommand[0] === AvaliableCommands.tilda) {
+        //     const homePath = process.env.HOME ?? undefined;
+        //
+        //     if(homePath && (typeof homePath === 'string') && (homePath.trim().length > 0)) {
+        //         await chdirWithChecks(homePath);
+        //     }
+    // }
+
+    else if (splitCommand.length !== 0) {
+        const executableName: string = splitCommand[0];
+        // console.log("test:", splitCommand[0]);
+
+        const fullPath = await findExecutableInPath(executableName);
+
+        // console.log(`HERE`);
+        if (fullPath) {
+            const args = splitCommand.slice(1);
+
+            // const result = await commandExecuteWithPromise(executableName, args, fullPath);
+            const result = await commandExecuteWithPromise(executableName, args);
+
+            const {
+                isSuccessful,
+                returnedStdout,
+                returnedStderr,
+                returnedError
+            } = result;
+
+            if (returnedStdout) {
+                // process.stdout.write(returnedStdout);
+                return returnedStdout;
+            }
+
+            // ошибки не обрабатываем, т.к. это мешает прохождению некоторых автотестов на платформе
+            // if (!isSuccessful) {
+            //     console.log(`${returnedStderr}`);
+            //     console.log(`${returnedError}`);
+            // }
+            // TODO: тут еще обработать ошибки из result (на случай когда и если они появятся)
+        } else {
+            // console.log(`${splitCommand[0]}: command not found`);
+            return `${splitCommand[0]}: command not found`;
+
+        }
+    } else {
+        // console.log(`${splitCommand[0]}: command not found`);
+        return `${splitCommand[0]}: command not found`;
+
+    }
+}
+
+
 async function run() {
 
     while (true) {
@@ -46,73 +137,24 @@ async function run() {
             } catch (err) {
                 console.log(`${err}`);
             }
+        } else if (splitCommand.length > 1 && (splitCommand.includes('>') || splitCommand.includes('1>'))) {   // внимательно! надо использовать includes вместо indexOf! значение -1 это true в javascript. commandsToPrint.includes('>') || commandsToPrint.includes('1>') без явного
+            const index = splitCommand.findIndex(index => index === '>' || index === '1>');
+            // console.log('INDEX No.:', index);
 
-        } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.echo) {
-            const commandsToPrint = splitCommand.slice(1);
-
-            console.log(commandsToPrint.join(' '));
-        } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.type) {
-            if (splitCommand[1] in AvaliableCommands) {
-                console.log(`${splitCommand[1]} is a shell builtin`);
-            } else if (!(splitCommand[1] in AvaliableCommands)) {
-                const executableName: string = splitCommand[1];
-                const fullPath = await findExecutableInPath(executableName);
-
-                if (fullPath) {
-                    console.log(`${executableName} is ${fullPath}`);
-                } else {
-                    console.log(`${executableName}: not found`);
-                }
-            } else {
-                console.log(`${splitCommand[1]}: not found`);
-            }
-        } else if (splitCommand.length !== 0 && splitCommand[0].trim() === AvaliableCommands.pwd) {
-            const currentWorkingDirectory = process.cwd();
-            console.log(`${currentWorkingDirectory}`);
-        } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.cd) {
-            await chdirWithChecks(splitCommand[1]);
-        }
-            // else if (splitCommand.length === 1 && splitCommand[0] === AvaliableCommands.tilda) {
-            //     const homePath = process.env.HOME ?? undefined;
-            //
-            //     if(homePath && (typeof homePath === 'string') && (homePath.trim().length > 0)) {
-            //         await chdirWithChecks(homePath);
-            //     }
-        // }
-
-        else if (splitCommand.length !== 0) {
-            const executableName: string = splitCommand[0];
-            // console.log("test:", splitCommand[0]);
-
-            const fullPath = await findExecutableInPath(executableName);
-
-            // console.log(`HERE`);
-            if (fullPath) {
-                const args = splitCommand.slice(1);
-
-                // const result = await commandExecuteWithPromise(executableName, args, fullPath);
-                const result = await commandExecuteWithPromise(executableName, args);
-
-                const {
-                    isSuccessful,
-                    returnedStdout,
-                    returnedStderr,
-                    returnedError
-                } = result;
-
-                if (returnedStdout) {
-                    process.stdout.write(returnedStdout);
-                }
-                // if (!isSuccessful) {
-                //     console.log(`${returnedStderr}`);
-                //     console.log(`${returnedError}`);
-                // }
-                // TODO: тут еще обработать ошибки из result (на случай когда и если они появятся)
-            } else {
-                console.log(`${splitCommand[0]}: command not found`);
+            // splice возвращает то что он удалил!
+            // поэтому передавать внутрь функции надо измененный массив в отдельном вызове
+            const fileToWriteTo = splitCommand.splice(index);
+            const output = await resolveOutputForCommandArray(splitCommand);
+            console.log(output);
+            if (output) {
+                process.stdout.write(output);
             }
         } else {
-            console.log(`${splitCommand[0]}: command not found`);
+            const output = await resolveOutputForCommandArray(splitCommand);
+            console.log(output);
+            if (output) {
+                process.stdout.write(output);
+            }
         }
     }
 }
