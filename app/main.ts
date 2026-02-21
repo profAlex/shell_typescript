@@ -144,8 +144,10 @@ async function run() {
 
             // splice возвращает то что он удалил!
             // поэтому передавать внутрь функции надо измененный массив в отдельном вызове
-            const pathToWriteTo = splitCommand.splice(index);
+            let pathToWriteTo = splitCommand.splice(index);
+            pathToWriteTo = pathToWriteTo.splice(1); // избавляемся от символа > или 1>
             const output = await resolveOutputForCommandArray(splitCommand);
+            // console.log(output);
             if (output) {
                 await overwriteFile(pathToWriteTo[0],output)
             } else {
@@ -156,8 +158,11 @@ async function run() {
             // }
         } else {
             const output = await resolveOutputForCommandArray(splitCommand);
+
             if (output) {
-                process.stdout.write(output);
+                console.log(output);
+                //process.stdout.write(output);
+                //process.stdout.flush()
             }
         }
     }
