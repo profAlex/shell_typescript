@@ -5,6 +5,7 @@ import {AvaliableCommands} from "./types/avaliable-commands.ts";
 import {commandExecuteWithPromise} from "./utility/command-executor.ts";
 import {chdirWithChecks} from "./utility/cd-command-facilitator.ts";
 import {CommandParserLite} from "./utility/parser.ts";
+import {overwriteFile} from "./utility/write-overwrite-file-command.ts";
 
 
 const rl = createInterface({
@@ -143,15 +144,18 @@ async function run() {
 
             // splice возвращает то что он удалил!
             // поэтому передавать внутрь функции надо измененный массив в отдельном вызове
-            const fileToWriteTo = splitCommand.splice(index);
+            const pathToWriteTo = splitCommand.splice(index);
             const output = await resolveOutputForCommandArray(splitCommand);
-            console.log(output);
             if (output) {
-                process.stdout.write(output);
+                await overwriteFile(pathToWriteTo[0],output)
+            } else {
+                await overwriteFile(pathToWriteTo[0],"")
             }
+            // if (output) {
+            //     process.stdout.write(output);
+            // }
         } else {
             const output = await resolveOutputForCommandArray(splitCommand);
-            console.log(output);
             if (output) {
                 process.stdout.write(output);
             }
