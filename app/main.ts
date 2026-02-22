@@ -6,6 +6,7 @@ import {commandExecuteWithPromise} from "./utility/command-executor.ts";
 import {chdirWithChecks} from "./utility/cd-command-facilitator.ts";
 import {CommandParserLite} from "./utility/parser.ts";
 import {overwriteFile} from "./utility/write-overwrite-file-command.ts";
+import type {CustomExecResult} from "./types/custom-exec-result.ts";
 
 
 const rl = createInterface({
@@ -14,17 +15,21 @@ const rl = createInterface({
 });
 
 
-async function resolveOutputForCommandArray(splitCommand: string[]): Promise<string | void> {
+async function resolveOutputForCommandArray(splitCommand: string[]): Promise<CustomExecResult> {
     if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.echo) {
         const commandsToPrint = splitCommand.slice(1);
 
         // console.log(commandsToPrint.join(' '));
-        return commandsToPrint.join(' ');
+        return {
+            output: commandsToPrint.join(' ')
+        } as CustomExecResult;
 
     } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.type) {
         if (splitCommand[1] in AvaliableCommands) {
             // console.log(`${splitCommand[1]} is a shell builtin`);
-            return `${splitCommand[1]} is a shell builtin`;
+            return {
+                output: `${splitCommand[1]} is a shell builtin`
+            } as CustomExecResult;
 
         } else if (!(splitCommand[1] in AvaliableCommands)) {
             const executableName: string = splitCommand[1];
@@ -32,25 +37,34 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<str
 
             if (fullPath) {
                 // console.log(`${executableName} is ${fullPath}`);
-                return `${executableName} is ${fullPath}`;
+                return {
+                    output: `${executableName} is ${fullPath}`
+                } as CustomExecResult;
 
             } else {
                 // console.log(`${executableName}: not found`);
-                return `${executableName}: not found`;
-
+                return {
+                    error: `${executableName}: not found`
+                } as CustomExecResult;
             }
         } else {
             // console.log(`${splitCommand[1]}: not found`);
-            return `${splitCommand[1]}: not found`;
+            return {
+                error: `${splitCommand[1]}: not found`
+            } as CustomExecResult;
 
         }
     } else if (splitCommand.length !== 0 && splitCommand[0].trim() === AvaliableCommands.pwd) {
         const currentWorkingDirectory = process.cwd();
         // console.log(`${currentWorkingDirectory}`);
-        return `${currentWorkingDirectory}`;
+        return {
+            output: `${currentWorkingDirectory}`
+        } as CustomExecResult;
 
     } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.cd) {
-        return await chdirWithChecks(splitCommand[1]);
+        return {
+            output: await chdirWithChecks(splitCommand[1])
+        } as CustomExecResult;
     }
         // else if (splitCommand.length === 1 && splitCommand[0] === AvaliableCommands.tilda) {
         //     const homePath = process.env.HOME ?? undefined;
@@ -65,41 +79,96 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<str
         // console.log("test:", splitCommand[0]);
 
         const fullPath = await findExecutableInPath(executableName);
+        // в переменной храним промежуточный результат
+        let preliminaryResult: string = "";
+        // если будет найдена ошибка - она будет здесь и возвращать будем именно ее по заданной нам логике
+        let errorResult: string = "";
 
-        // console.log(`HERE`);
-        if (fullPath) {
-            const args = splitCommand.slice(1);
+        if (fullPath && splitCommand.length === 1) {
+            try {
+                const result = await commandExecuteWithPromise(executableName, []);
 
-            // const result = await commandExecuteWithPromise(executableName, args, fullPath);
-            const result = await commandExecuteWithPromise(executableName, args);
+                const {
+                    isSuccessful,
+                    returnedStdout,
+                    returnedStderr,
+                    returnedError
+                } = result;
 
-            const {
-                isSuccessful,
-                returnedStdout,
-                returnedStderr,
-                returnedError
-            } = result;
+                // ошибки не обрабатываем, т.к. это мешает прохождению некоторых автотестов на платформе
+                if (!isSuccessful) {
+                    // console.log(`${trimmedStderr}`);
+                    // return undefined;
+                    errorResult = returnedStderr.trimEnd();
+                }
 
-            if (returnedStdout) {
-                // process.stdout.write(returnedStdout);
-                return returnedStdout;
+                if (returnedStdout) {
+                    // process.stdout.write(returnedStdout);
+                    // console.log("TEST:",returnedStdout);
+                    // return returnedStdout;
+                    preliminaryResult += returnedStdout;
+                }
+            } catch (err) {
+                console.log(`UNEXPECTED ERROR: ${err} inside resolveOutputForCommandArray -> commandExecuteWithPromise(executableName, [arg])`);
             }
 
-            // ошибки не обрабатываем, т.к. это мешает прохождению некоторых автотестов на платформе
-            // if (!isSuccessful) {
-            //     console.log(`${returnedStderr}`);
-            //     console.log(`${returnedError}`);
-            // }
+            return {
+                output: preliminaryResult,
+                error: errorResult
+            } as CustomExecResult;
+        }
+        else if (fullPath) {
+            const args = splitCommand.slice(1);
+            // обрабатываем аргументы по-одному, т.к. если находится ошибка, то результат по переданным валидным - потеряется и выведется только ошибка
+
+
+            for (const arg of args) {
+                try {
+                    const result = await commandExecuteWithPromise(executableName, [arg]);
+
+                    const {
+                        isSuccessful,
+                        returnedStdout,
+                        returnedStderr,
+                        returnedError
+                    } = result;
+
+                    // ошибки не обрабатываем, т.к. это мешает прохождению некоторых автотестов на платформе
+                    if (!isSuccessful) {
+                        // console.log(`${trimmedStderr}`);
+                        // return undefined;
+                        errorResult = returnedStderr.trimEnd();
+                    }
+
+                    if (returnedStdout) {
+                        // process.stdout.write(returnedStdout);
+                        // console.log("TEST:",returnedStdout);
+                        // return returnedStdout;
+                        preliminaryResult += returnedStdout;
+                    }
+                } catch (err) {
+                    console.log(`UNEXPECTED ERROR: ${err} inside resolveOutputForCommandArray -> commandExecuteWithPromise(executableName, [arg])`);
+                }
+            }
+
+            return {
+                output: preliminaryResult,
+                error: errorResult
+            } as CustomExecResult;
+
             // TODO: тут еще обработать ошибки из result (на случай когда и если они появятся)
         } else {
             // console.log(`${splitCommand[0]}: command not found`);
-            return `${splitCommand[0]}: command not found`;
+            return {
+                error: `${splitCommand[0]}: command not found`
+            } as CustomExecResult;
 
         }
     } else {
         // console.log(`${splitCommand[0]}: command not found`);
-        return `${splitCommand[0]}: command not found`;
-
+        return {
+            error: `${splitCommand[0]}: command not found`
+        } as CustomExecResult;
     }
 }
 
@@ -148,21 +217,27 @@ async function run() {
             pathToWriteTo = pathToWriteTo.splice(1); // избавляемся от символа > или 1>
             const output = await resolveOutputForCommandArray(splitCommand);
             // console.log(output);
-            if (output) {
-                await overwriteFile(pathToWriteTo[0],output)
-            } else {
-                await overwriteFile(pathToWriteTo[0],"")
+            if (output.error)
+            {
+                console.error(output.error);
             }
+
+            if (output.output) {
+                await overwriteFile(pathToWriteTo[0], output.output);
+            }
+            // else {
+            //     await overwriteFile(pathToWriteTo[0],"")
+            // }
             // if (output) {
             //     process.stdout.write(output);
             // }
         } else {
             const output = await resolveOutputForCommandArray(splitCommand);
 
-            if (output) {
-                console.log(output);
-                //process.stdout.write(output);
-                //process.stdout.flush()
+            if (output.error) {
+                console.log(output.error);
+            } else if (output.output) {
+                console.log(output.output);
             }
         }
     }

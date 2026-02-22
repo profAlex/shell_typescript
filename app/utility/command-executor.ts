@@ -79,11 +79,18 @@ export async function commandExecuteWithPromise(
                     });
                     return;
                 }
+                const trimmedStdout = stdout.trimEnd();
+
                 resolve({
                     isSuccessful: true,
                     returnedStderr: stderr,
-                    returnedStdout: stdout
+                    returnedStdout: trimmedStdout
                 });
+                // resolve({
+                //     isSuccessful: true,
+                //     returnedStderr: stderr,
+                //     returnedStdout: stdout
+                // });
             }
         );
     });
