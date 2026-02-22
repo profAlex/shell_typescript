@@ -73,10 +73,10 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
         //         await chdirWithChecks(homePath);
         //     }
     // }
-
+        
+    // ответвление для обработки невстроенных команд
     else if (splitCommand.length !== 0) {
         const executableName: string = splitCommand[0];
-        // console.log("test:", splitCommand[0]);
 
         const fullPath = await findExecutableInPath(executableName);
         // в переменной храним промежуточный результат
@@ -84,6 +84,7 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
         // если будет найдена ошибка - она будет здесь и возвращать будем именно ее по заданной нам логике
         let errorResult: string = "";
 
+        // реализация для невстроенных команд, состоящих из единственного названия команды
         if (fullPath && splitCommand.length === 1) {
             try {
                 const result = await commandExecuteWithPromise(executableName, []);
@@ -117,6 +118,7 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
                 error: errorResult
             } as CustomExecResult;
         }
+        // отдельная реализация для невстроенных команд, отличных от 'cat' и имеющих параметры
         else if (fullPath && splitCommand.length > 1 && splitCommand[0].trim() !== 'cat')
         {
             const args = splitCommand.slice(1);
@@ -153,6 +155,7 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
                 error: errorResult
             } as CustomExecResult;
         }
+        // отдельная реализация для команды 'cat'
         else if (fullPath && splitCommand.length > 1 && splitCommand[0].trim() === 'cat') {
             const args = splitCommand.slice(1);
             // обрабатываем аргументы по-одному, т.к. если находится ошибка, то результат по переданным валидным - потеряется и выведется только ошибка
