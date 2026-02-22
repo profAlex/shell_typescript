@@ -117,10 +117,45 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
                 error: errorResult
             } as CustomExecResult;
         }
-        else if (fullPath) {
+        else if (fullPath && splitCommand.length > 1 && splitCommand[0].trim() !== 'cat')
+        {
+            const args = splitCommand.slice(1);
+
+            try {
+                const result = await commandExecuteWithPromise(executableName, args);
+
+                const {
+                    isSuccessful,
+                    returnedStdout,
+                    returnedStderr,
+                    returnedError
+                } = result;
+
+                // ошибки не обрабатываем, т.к. это мешает прохождению некоторых автотестов на платформе
+                if (!isSuccessful) {
+                    // console.log(`${trimmedStderr}`);
+                    // return undefined;
+                    errorResult = returnedStderr.trimEnd();
+                }
+
+                if (returnedStdout) {
+                    // process.stdout.write(returnedStdout);
+                    // console.log("TEST:",returnedStdout);
+                    // return returnedStdout;
+                    preliminaryResult += returnedStdout;
+                }
+            } catch (err) {
+                console.log(`UNEXPECTED ERROR: ${err} inside resolveOutputForCommandArray -> commandExecuteWithPromise(executableName, [arg])`);
+            }
+
+            return {
+                output: preliminaryResult,
+                error: errorResult
+            } as CustomExecResult;
+        }
+        else if (fullPath && splitCommand.length > 1 && splitCommand[0].trim() === 'cat') {
             const args = splitCommand.slice(1);
             // обрабатываем аргументы по-одному, т.к. если находится ошибка, то результат по переданным валидным - потеряется и выведется только ошибка
-
 
             for (const arg of args) {
                 try {
@@ -209,14 +244,12 @@ async function run() {
             }
         } else if (splitCommand.length > 1 && (splitCommand.includes('>') || splitCommand.includes('1>'))) {   // внимательно! надо использовать includes вместо indexOf! значение -1 это true в javascript. commandsToPrint.includes('>') || commandsToPrint.includes('1>') без явного
             const index = splitCommand.findIndex(index => index === '>' || index === '1>');
-            // console.log('INDEX No.:', index);
-
             // splice возвращает то что он удалил!
             // поэтому передавать внутрь функции надо измененный массив в отдельном вызове
             let pathToWriteTo = splitCommand.splice(index);
             pathToWriteTo = pathToWriteTo.splice(1); // избавляемся от символа > или 1>
             const output = await resolveOutputForCommandArray(splitCommand);
-            // console.log(output);
+
             if (output.error)
             {
                 console.error(output.error);
@@ -225,12 +258,7 @@ async function run() {
             if (output.output) {
                 await overwriteFile(pathToWriteTo[0], output.output);
             }
-            // else {
-            //     await overwriteFile(pathToWriteTo[0],"")
-            // }
-            // if (output) {
-            //     process.stdout.write(output);
-            // }
+
         } else {
             const output = await resolveOutputForCommandArray(splitCommand);
 
