@@ -21,14 +21,16 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
 
         // console.log(commandsToPrint.join(' '));
         return {
-            output: commandsToPrint.join(' ')
+            output: commandsToPrint.join(' '),
+            error: "",
         } as CustomExecResult;
 
     } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.type) {
         if (splitCommand[1] in AvaliableCommands) {
             // console.log(`${splitCommand[1]} is a shell builtin`);
             return {
-                output: `${splitCommand[1]} is a shell builtin`
+                output: `${splitCommand[1]} is a shell builtin`,
+                error: "",
             } as CustomExecResult;
 
         } else if (!(splitCommand[1] in AvaliableCommands)) {
@@ -38,18 +40,21 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
             if (fullPath) {
                 // console.log(`${executableName} is ${fullPath}`);
                 return {
-                    output: `${executableName} is ${fullPath}`
+                    output: `${executableName} is ${fullPath}`,
+                    error: "",
                 } as CustomExecResult;
 
             } else {
                 // console.log(`${executableName}: not found`);
                 return {
+                    output: "",
                     error: `${executableName}: not found`
                 } as CustomExecResult;
             }
         } else {
             // console.log(`${splitCommand[1]}: not found`);
             return {
+                output: "",
                 error: `${splitCommand[1]}: not found`
             } as CustomExecResult;
 
@@ -58,12 +63,14 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
         const currentWorkingDirectory = process.cwd();
         // console.log(`${currentWorkingDirectory}`);
         return {
-            output: `${currentWorkingDirectory}`
+            output: `${currentWorkingDirectory}`,
+            error: "",
         } as CustomExecResult;
 
     } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.cd) {
+        await chdirWithChecks(splitCommand[1])
         return {
-            output: await chdirWithChecks(splitCommand[1])
+
         } as CustomExecResult;
     }
         // else if (splitCommand.length === 1 && splitCommand[0] === AvaliableCommands.tilda) {
@@ -72,12 +79,12 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
         //     if(homePath && (typeof homePath === 'string') && (homePath.trim().length > 0)) {
         //         await chdirWithChecks(homePath);
         //     }
-    // }
-        
+        // }
+
     // ответвление для обработки невстроенных команд
     else if (splitCommand.length !== 0) {
         const executableName: string = splitCommand[0];
-
+        // console.log("FIRST WE GET HERE RIGHT?");
         const fullPath = await findExecutableInPath(executableName);
         // в переменной храним промежуточный результат
         let preliminaryResult: string = "";
@@ -119,8 +126,7 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
             } as CustomExecResult;
         }
         // отдельная реализация для невстроенных команд, отличных от 'cat' и имеющих параметры
-        else if (fullPath && splitCommand.length > 1 && splitCommand[0].trim() !== 'cat')
-        {
+        else if (fullPath && splitCommand.length > 1 && splitCommand[0].trim() !== 'cat') {
             const args = splitCommand.slice(1);
 
             try {
@@ -245,7 +251,7 @@ async function run() {
             } catch (err) {
                 console.log(`${err}`);
             }
-        } else if (splitCommand.length > 1 && (splitCommand.includes('>') || splitCommand.includes('1>'))) {   // внимательно! надо использовать includes вместо indexOf! значение -1 это true в javascript. commandsToPrint.includes('>') || commandsToPrint.includes('1>') без явного
+        } else if (splitCommand.length > 1 && (splitCommand.includes('>') || splitCommand.includes('1>'))) {   // внимательно! надо использовать includes вместо indexOf! значение -1 это true в javascript. commandsToPrint.includes('>') || commandsToPrint.includes('1>')
             const index = splitCommand.findIndex(index => index === '>' || index === '1>');
             // splice возвращает то что он удалил!
             // поэтому передавать внутрь функции надо измененный массив в отдельном вызове
@@ -253,13 +259,31 @@ async function run() {
             pathToWriteTo = pathToWriteTo.splice(1); // избавляемся от символа > или 1>
             const output = await resolveOutputForCommandArray(splitCommand);
 
-            if (output.error)
-            {
-                console.error(output.error);
+            if (output.error) {
+                console.log(output.error);
             }
 
             if (output.output) {
                 await overwriteFile(pathToWriteTo[0], output.output);
+            }
+
+        } else if (splitCommand.length > 1 && splitCommand.includes('2>')) {   // внимательно! надо использовать includes вместо indexOf! значение -1 это true в javascript.
+            const index = splitCommand.findIndex(index => index === '2>');
+            // splice возвращает то что он удалил!
+            // поэтому передавать внутрь функции надо измененный массив в отдельном вызове
+            let pathToWriteTo = splitCommand.splice(index);
+            pathToWriteTo = pathToWriteTo.splice(1); // избавляемся от символа > или 1>
+            const output = await resolveOutputForCommandArray(splitCommand);
+
+            // при любом раскладе записываем ошибки. означает ли это что мы должны при любом раскладе записывать и результат в ответвлении выше??
+            // console.log("TEST: ", output.error);
+            // console.log("TEST: ", pathToWriteTo[0]);
+
+            await overwriteFile(pathToWriteTo[0], output.error as string);
+
+            if (output.output) {
+                console.log(output.output);
+                // await overwriteFile(pathToWriteTo[0], output.output);
             }
 
         } else {

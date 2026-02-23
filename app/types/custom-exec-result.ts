@@ -1,4 +1,4 @@
 export type CustomExecResult = {
-    output: string | undefined | void,
-    error: string | undefined | void,
+    output: string,
+    error: string,
 }

@@ -19,9 +19,10 @@ export async function overwriteFile(
     dataToWrite: string
 ): Promise<void> {
     try {
+        // console.log("TEST INSIDE:", dataToWrite);
         await fs.promises.writeFile(filepathAndName, dataToWrite);
     } catch (err) {
-        console.error("ERROR:", err);
+        console.log("ERROR:", err);
     }
 }
 
@@ -32,6 +33,6 @@ export async function appendFile(
     try {
         await fs.promises.appendFile(filepathAndName, dataToWrite);
     } catch (err) {
-        console.error("ERROR:", err);
+        console.log("ERROR:", err);
     }
 }
