@@ -7,8 +7,6 @@
     <list default="true" id="f8413b89-c7ef-4a79-a9e2-0a535539403e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utility/command-executor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/utility/command-executor.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utility/write-overwrite-file-command.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/utility/write-overwrite-file-command.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +105,7 @@
       <workItem from="1771702153731" duration="8485000" />
       <workItem from="1771785117128" duration="12970000" />
       <workItem from="1771880499354" duration="3060000" />
-      <workItem from="1771930108015" duration="2571000" />
+      <workItem from="1771930108015" duration="2976000" />
     </task>
     <servers />
   </component>
