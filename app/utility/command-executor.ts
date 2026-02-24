@@ -79,7 +79,8 @@ export async function commandExecuteWithPromise(
                     });
                     return;
                 }
-                const trimmedStdout = stdout.trimEnd();
+                // const trimmedStdout = stdout.trimEnd();
+                const trimmedStdout = stdout;
 
                 resolve({
                     isSuccessful: true,

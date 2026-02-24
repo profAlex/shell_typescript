@@ -5,7 +5,7 @@ import {AvaliableCommands} from "./types/avaliable-commands.ts";
 import {commandExecuteWithPromise} from "./utility/command-executor.ts";
 import {chdirWithChecks} from "./utility/cd-command-facilitator.ts";
 import {CommandParserLite} from "./utility/parser.ts";
-import {overwriteFile} from "./utility/write-overwrite-file-command.ts";
+import {appendFile, overwriteFile} from "./utility/write-overwrite-file-command.ts";
 import type {CustomExecResult} from "./types/custom-exec-result.ts";
 
 
@@ -69,9 +69,7 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
 
     } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.cd) {
         await chdirWithChecks(splitCommand[1])
-        return {
-
-        } as CustomExecResult;
+        return {} as CustomExecResult;
     }
         // else if (splitCommand.length === 1 && splitCommand[0] === AvaliableCommands.tilda) {
         //     const homePath = process.env.HOME ?? undefined;
@@ -121,7 +119,7 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
             }
 
             return {
-                output: preliminaryResult,
+                output: preliminaryResult.trimEnd(),
                 error: errorResult
             } as CustomExecResult;
         }
@@ -157,7 +155,7 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
             }
 
             return {
-                output: preliminaryResult,
+                output: preliminaryResult.trimEnd(),
                 error: errorResult
             } as CustomExecResult;
         }
@@ -181,7 +179,7 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
                     if (!isSuccessful) {
                         // console.log(`${trimmedStderr}`);
                         // return undefined;
-                        errorResult = returnedStderr.trimEnd();
+                        errorResult = returnedStderr.trim();
                     }
 
                     if (returnedStdout) {
@@ -196,20 +194,17 @@ async function resolveOutputForCommandArray(splitCommand: string[]): Promise<Cus
             }
 
             return {
-                output: preliminaryResult,
+                output: preliminaryResult.trim(),
                 error: errorResult
             } as CustomExecResult;
 
             // TODO: тут еще обработать ошибки из result (на случай когда и если они появятся)
         } else {
-            // console.log(`${splitCommand[0]}: command not found`);
             return {
                 error: `${splitCommand[0]}: command not found`
             } as CustomExecResult;
-
         }
     } else {
-        // console.log(`${splitCommand[0]}: command not found`);
         return {
             error: `${splitCommand[0]}: command not found`
         } as CustomExecResult;
@@ -244,7 +239,6 @@ async function run() {
                 // const testParser = new CommandParserLite('  as(d  \'ec( ho\' \'\'\'type\' asd \'  {}  \'   ) ');
                 const testParser = new CommandParserLite('\'\"hello world\"\'');
 
-
                 testParser.parse();
                 console.log(testParser.getMaxDepth());
                 console.log(testParser.getOutput());
@@ -253,38 +247,52 @@ async function run() {
             }
         } else if (splitCommand.length > 1 && (splitCommand.includes('>') || splitCommand.includes('1>'))) {   // внимательно! надо использовать includes вместо indexOf! значение -1 это true в javascript. commandsToPrint.includes('>') || commandsToPrint.includes('1>')
             const index = splitCommand.findIndex(index => index === '>' || index === '1>');
+
             // splice возвращает то что он удалил!
             // поэтому передавать внутрь функции надо измененный массив в отдельном вызове
             let pathToWriteTo = splitCommand.splice(index);
             pathToWriteTo = pathToWriteTo.splice(1); // избавляемся от символа > или 1>
+
             const output = await resolveOutputForCommandArray(splitCommand);
 
             if (output.error) {
                 console.log(output.error);
             }
 
-            if (output.output) {
-                await overwriteFile(pathToWriteTo[0], output.output);
-            }
+            // при любом раскладе записываем вывод
+            await overwriteFile(pathToWriteTo[0], output.output);
 
         } else if (splitCommand.length > 1 && splitCommand.includes('2>')) {   // внимательно! надо использовать includes вместо indexOf! значение -1 это true в javascript.
             const index = splitCommand.findIndex(index => index === '2>');
             // splice возвращает то что он удалил!
             // поэтому передавать внутрь функции надо измененный массив в отдельном вызове
             let pathToWriteTo = splitCommand.splice(index);
-            pathToWriteTo = pathToWriteTo.splice(1); // избавляемся от символа > или 1>
+            pathToWriteTo = pathToWriteTo.splice(1); // избавляемся от символа 2>
             const output = await resolveOutputForCommandArray(splitCommand);
 
             // при любом раскладе записываем ошибки. означает ли это что мы должны при любом раскладе записывать и результат в ответвлении выше??
-            // console.log("TEST: ", output.error);
-            // console.log("TEST: ", pathToWriteTo[0]);
-
-            await overwriteFile(pathToWriteTo[0], output.error as string);
+            await overwriteFile(pathToWriteTo[0], output.error.trimEnd());
 
             if (output.output) {
-                console.log(output.output);
-                // await overwriteFile(pathToWriteTo[0], output.output);
+                console.log(output.output.trimEnd());
             }
+
+        } else if (splitCommand.length > 1 && (splitCommand.includes('>>') || splitCommand.includes('1>>'))) {   // внимательно! надо использовать includes вместо indexOf! значение -1 это true в javascript.
+            const index = splitCommand.findIndex(index => index === '>>' || index === '1>>');
+
+            // splice возвращает то что он удалил!
+            // поэтому передавать внутрь функции надо измененный массив в отдельном вызове
+            let pathToWriteTo = splitCommand.splice(index);
+            pathToWriteTo = pathToWriteTo.splice(1); // избавляемся от символа >>
+
+            const output = await resolveOutputForCommandArray(splitCommand);
+
+            if (output.error) {
+                console.log(output.error.trim());
+            }
+
+            // при любом раскладе записываем вывод
+            await appendFile(pathToWriteTo[0], output.output);
 
         } else {
             const output = await resolveOutputForCommandArray(splitCommand);

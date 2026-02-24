@@ -31,7 +31,7 @@ export async function appendFile(
     dataToWrite: string
 ): Promise<void> {
     try {
-        await fs.promises.appendFile(filepathAndName, dataToWrite);
+        await fs.promises.appendFile(filepathAndName, `\n${dataToWrite}`);
     } catch (err) {
         console.log("ERROR:", err);
     }
