@@ -9,7 +9,6 @@ export async function resolveCustomExecResultForCommandArray(splitCommand: strin
     if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.echo) {
         const commandsToPrint = splitCommand.slice(1);
 
-        // console.log(commandsToPrint.join(' '));
         return {
             output: commandsToPrint.join(' '),
             error: "",
@@ -17,7 +16,6 @@ export async function resolveCustomExecResultForCommandArray(splitCommand: strin
 
     } else if (splitCommand.length > 1 && splitCommand[0].trim() === AvaliableCommands.type) {
         if (splitCommand[1] in AvaliableCommands) {
-            // console.log(`${splitCommand[1]} is a shell builtin`);
             return {
                 output: `${splitCommand[1]} is a shell builtin`,
                 error: "",
@@ -28,21 +26,18 @@ export async function resolveCustomExecResultForCommandArray(splitCommand: strin
             const fullPath = await findExecutableInPath(executableName);
 
             if (fullPath) {
-                // console.log(`${executableName} is ${fullPath}`);
                 return {
                     output: `${executableName} is ${fullPath}`,
                     error: "",
                 } as CustomExecResult;
 
             } else {
-                // console.log(`${executableName}: not found`);
                 return {
                     output: "",
                     error: `${executableName}: not found`
                 } as CustomExecResult;
             }
         } else {
-            // console.log(`${splitCommand[1]}: not found`);
             return {
                 output: "",
                 error: `${splitCommand[1]}: not found`
@@ -51,7 +46,6 @@ export async function resolveCustomExecResultForCommandArray(splitCommand: strin
         }
     } else if (splitCommand.length !== 0 && splitCommand[0].trim() === AvaliableCommands.pwd) {
         const currentWorkingDirectory = process.cwd();
-        // console.log(`${currentWorkingDirectory}`);
         return {
             output: `${currentWorkingDirectory}`,
             error: "",
@@ -93,15 +87,10 @@ export async function resolveCustomExecResultForCommandArray(splitCommand: strin
 
                 // ошибки не обрабатываем, т.к. это мешает прохождению некоторых автотестов на платформе
                 if (!isSuccessful) {
-                    // console.log(`${trimmedStderr}`);
-                    // return undefined;
                     errorResult = returnedStderr.trimEnd();
                 }
 
                 if (returnedStdout) {
-                    // process.stdout.write(returnedStdout);
-                    // console.log("TEST:",returnedStdout);
-                    // return returnedStdout;
                     preliminaryResult += returnedStdout;
                 }
             } catch (err) {
@@ -129,15 +118,10 @@ export async function resolveCustomExecResultForCommandArray(splitCommand: strin
 
                 // ошибки не обрабатываем, т.к. это мешает прохождению некоторых автотестов на платформе
                 if (!isSuccessful) {
-                    // console.log(`${trimmedStderr}`);
-                    // return undefined;
-                    errorResult = returnedStderr.trimEnd();
+                    errorResult = returnedStderr;
                 }
 
                 if (returnedStdout) {
-                    // process.stdout.write(returnedStdout);
-                    // console.log("TEST:",returnedStdout);
-                    // return returnedStdout;
                     preliminaryResult += returnedStdout;
                 }
             } catch (err) {
@@ -146,7 +130,7 @@ export async function resolveCustomExecResultForCommandArray(splitCommand: strin
 
             return {
                 output: preliminaryResult.trimEnd(),
-                error: errorResult
+                error: errorResult.trim()
             } as CustomExecResult;
         }
         // отдельная реализация для команды 'cat'
@@ -167,15 +151,10 @@ export async function resolveCustomExecResultForCommandArray(splitCommand: strin
 
                     // ошибки не обрабатываем, т.к. это мешает прохождению некоторых автотестов на платформе
                     if (!isSuccessful) {
-                        // console.log(`${trimmedStderr}`);
-                        // return undefined;
-                        errorResult = returnedStderr.trim();
+                        errorResult = returnedStderr;
                     }
 
                     if (returnedStdout) {
-                        // process.stdout.write(returnedStdout);
-                        // console.log("TEST:",returnedStdout);
-                        // return returnedStdout;
                         preliminaryResult += returnedStdout;
                     }
                 } catch (err) {
@@ -185,7 +164,7 @@ export async function resolveCustomExecResultForCommandArray(splitCommand: strin
 
             return {
                 output: preliminaryResult.trim(),
-                error: errorResult
+                error: errorResult.trim(),
             } as CustomExecResult;
 
             // TODO: тут еще обработать ошибки из result (на случай когда и если они появятся)

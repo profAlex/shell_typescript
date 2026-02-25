@@ -1,12 +1,6 @@
 import {createInterface} from "readline";
-
-import {findExecutableInPath} from "./utility/find-executables.ts";
-import {AvaliableCommands} from "./types/avaliable-commands.ts";
-import {commandExecuteWithPromise} from "./utility/command-executor.ts";
-import {chdirWithChecks} from "./utility/cd-command-facilitator.ts";
 import {CommandParserLite} from "./utility/parser.ts";
 import {appendFile, overwriteFile} from "./utility/write-overwrite-file-command.ts";
-import type {CustomExecResult} from "./types/custom-exec-result.ts";
 import {resolveCustomExecResultForCommandArray} from "./utility/resolve-custom-exec-result.ts";
 
 
@@ -14,7 +8,6 @@ const rl = createInterface({
     input: process.stdin,
     output: process.stdout,
 });
-
 
 
 async function run() {
@@ -98,6 +91,21 @@ async function run() {
 
             // при любом раскладе записываем вывод
             await appendFile(pathToWriteTo[0], output.output);
+
+        } else if (splitCommand.length > 1 && splitCommand.includes('2>>')) {   // внимательно! надо использовать includes вместо indexOf! значение -1 это true в javascript.
+            const index = splitCommand.findIndex(index => index === '2>>');
+            // splice возвращает то что он удалил!
+            // поэтому передавать внутрь функции надо измененный массив в отдельном вызове
+            let pathToWriteTo = splitCommand.splice(index);
+            pathToWriteTo = pathToWriteTo.splice(1); // избавляемся от символа 2>
+            const output = await resolveCustomExecResultForCommandArray(splitCommand);
+
+            // при любом раскладе записываем ошибки. означает ли это что мы должны при любом раскладе записывать и результат в ответвлении выше??
+            await appendFile(pathToWriteTo[0], output.error.trimEnd());
+
+            if (output.output) {
+                console.log(output.output.trimEnd());
+            }
 
         } else {
             const output = await resolveCustomExecResultForCommandArray(splitCommand);
