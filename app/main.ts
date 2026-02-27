@@ -2,6 +2,8 @@ import {createInterface} from "readline";
 import {CommandParserLite} from "./utility/parser.ts";
 import {appendFile, overwriteFile} from "./utility/write-overwrite-file-command.ts";
 import {resolveCustomExecResultForCommandArray} from "./utility/resolve-custom-exec-result.ts";
+import {listRootAutoCompletions, Trie} from "./utility/trie-util.ts";
+import * as test from "node:test";
 
 
 const rl = createInterface({
@@ -33,13 +35,29 @@ async function run() {
 
         if (splitCommand.length === 1 && splitCommand[0] === 'testcustom') {
             try {
-                // const testParser = new CommandParserLite('((asd(()((()))())))');
-                // const testParser = new CommandParserLite('  as(d  \'ec( ho\' \'\'\'type\' asd \'  {}  \'   ) ');
-                const testParser = new CommandParserLite('\'\"hello world\"\'');
+                // // const testParser = new CommandParserLite('((asd(()((()))())))');
+                // // const testParser = new CommandParserLite('  as(d  \'ec( ho\' \'\'\'type\' asd \'  {}  \'   ) ');
+                // const testParser = new CommandParserLite('\'\"hello world\"\'');
+                //
+                // testParser.parse();
+                // console.log(testParser.getMaxDepth());
+                // console.log(testParser.getOutput());
 
-                testParser.parse();
-                console.log(testParser.getMaxDepth());
-                console.log(testParser.getOutput());
+                let testClass = new Trie();
+                testClass.insertWord("test");
+                testClass.insertWord("teso");
+                testClass.insertWord("cat");
+                testClass.insertWord("catastrophie");
+                testClass.insertWord("");
+                testClass.insertWord("l");
+
+                console.log(testClass.searchWord("cat"));
+                console.log(testClass.searchWord("catno"));
+
+
+
+                console.log("TESTING FUNCTION:", listRootAutoCompletions(testClass));
+
             } catch (err) {
                 console.log(`${err}`);
             }

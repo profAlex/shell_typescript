@@ -7,8 +7,8 @@
     <list default="true" id="f8413b89-c7ef-4a79-a9e2-0a535539403e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utility/resolve-custom-exec-result.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/utility/resolve-custom-exec-result.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utility/write-overwrite-file-command.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/utility/write-overwrite-file-command.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +19,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="TypeScript File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -36,26 +37,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Node.js.cd-command-facilitator.ts.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.find-executables.ts.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.main.ts.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.parser.ts.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/bb/Documents/CODECRAFTERS_Practice/codecrafters-shell-typescript&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/home/bb/Downloads/WebStorm-243.23654.157/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Node.js.cd-command-facilitator.ts.executor": "Run",
+    "Node.js.find-executables.ts.executor": "Run",
+    "Node.js.main.ts.executor": "Run",
+    "Node.js.parser.ts.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/home/bb/Documents/CODECRAFTERS_Practice/codecrafters-shell-typescript",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "/home/bb/Documents/CODECRAFTERS_Practice/codecrafters-shell-typescript/node_modules/prettier",
+    "settings.editor.selected.configurable": "settings.javascript.prettier",
+    "ts.external.directory.path": "/home/bb/Downloads/WebStorm-243.23654.157/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -108,7 +110,9 @@
       <workItem from="1771785117128" duration="12970000" />
       <workItem from="1771880499354" duration="3060000" />
       <workItem from="1771930108015" duration="3563000" />
-      <workItem from="1772050665998" duration="1448000" />
+      <workItem from="1772050665998" duration="2214000" />
+      <workItem from="1772139312383" duration="15000" />
+      <workItem from="1772185639415" duration="10974000" />
     </task>
     <servers />
   </component>
