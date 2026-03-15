@@ -1,5 +1,6 @@
 module.exports = {
-  insertFinalNewline: false,
-  trimFinalNewlines: false,
-
+    tabWidth: 4,
+    useTabs: false,
+    insertFinalNewline: false,
+    trimFinalNewlines: false,
 };
