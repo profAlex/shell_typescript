@@ -34,6 +34,51 @@ export class Trie {
 
         return current.isEndOfWord;
     }
+
+    getLastCharNode(wordStart: string): TrieNode | null {
+        let current: TrieNode = this.root;
+        for (const char of wordStart) {
+            const nextNode = current.children.get(char);
+            //console.log("INSIDE RESULT", char);
+
+            if (!nextNode) {  // явно проверяем на undefined/null
+                //console.log("NULL RESULT", char);
+                return null;
+            }
+
+            current = nextNode;
+        }
+
+        return current;
+    }
+
+    searchPossibleWords(wordStart: string): string[] {
+        const ending = this.getLastCharNode(wordStart);
+        if (ending && !ending.isEndOfWord) {
+            let listOfWords: string[] = [];
+            let nodeStart = ending;
+
+            function getWord(currentWord: string, node: TrieNode) {
+                if (node.isEndOfWord) {
+                    listOfWords.push(wordStart+currentWord+' ');
+                }
+
+                for (const [char, nextNode] of node.children) {
+                    getWord(currentWord + char, nextNode);
+                }
+            }
+
+            for (const [firstLetter, childNode] of nodeStart.children) {
+                getWord(firstLetter, childNode);
+            }
+
+            return listOfWords;
+        } else if (ending && ending.isEndOfWord) {
+            return [wordStart];
+        } else {
+            return []; //ничего не найдено; ending === null
+        }
+    }
 }
 
 
@@ -42,17 +87,16 @@ export function listRootAutoCompletions(trieExemplar: Trie): string[] {
     let nodeStart = trieExemplar.getRoot();
 
     function getWord(currentWord: string, node: TrieNode) {
-        if(node.isEndOfWord) {
+        if (node.isEndOfWord) {
             listOfWords.push(currentWord);
         }
 
         for (const [char, nextNode] of node.children) {
-            getWord(currentWord+char, nextNode);
+            getWord(currentWord + char, nextNode);
         }
     }
 
-    for (const [firstLetter, childNode] of nodeStart.children)
-    {
+    for (const [firstLetter, childNode] of nodeStart.children) {
         getWord(firstLetter, childNode);
     }
 

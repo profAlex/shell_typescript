@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f8413b89-c7ef-4a79-a9e2-0a535539403e" name="Changes" comment="" />
+    <list default="true" id="f8413b89-c7ef-4a79-a9e2-0a535539403e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utility/trie-util.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/utility/trie-util.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,6 +42,7 @@
     &quot;Node.js.find-executables.ts.executor&quot;: &quot;Run&quot;,
     &quot;Node.js.main.ts.executor&quot;: &quot;Run&quot;,
     &quot;Node.js.parser.ts.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.trie-util.ts.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
@@ -110,7 +115,9 @@
       <workItem from="1772185639415" duration="11630000" />
       <workItem from="1772308771852" duration="183000" />
       <workItem from="1773605899762" duration="4114000" />
-      <workItem from="1773666782591" duration="379000" />
+      <workItem from="1773666782591" duration="1153000" />
+      <workItem from="1773673927973" duration="7938000" />
+      <workItem from="1773695721459" duration="1098000" />
     </task>
     <servers />
   </component>
