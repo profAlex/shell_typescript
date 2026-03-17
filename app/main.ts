@@ -309,12 +309,13 @@ trieClass.insertWord("echo");
 trieClass.insertWord("exit");
 
 function getAutocompleteOptions(input: string): string[] {
-    //console.log("SENT INPUT", input);
+    // генерирует массив слов, в которых начало слова соответствует заданному в input
     const result = trieClass.searchPossibleWords(input);
-    //console.log(result);
+
     return result;
 }
 
+// глобальный буфер, в котором накапливается строка, необходимо в первую очередь для того чтобы передать команду в обработчик команд целиком при нажатии на enter, а также в обработчик клавиши TAB
 let currentInput = '';
 
 function prompt() {
@@ -334,7 +335,7 @@ if (process.stdin.isTTY && process.stdin.setRawMode) {
 
 process.stdin.on('data', (data: Buffer) => {
     const input = data.toString();
-
+    // в ряде случаев input может состоять из нескольких символов, т.е. при одном нажати клавиши будет генерироваться несколько символов в 'data'
     for (const char of input) {
         switch (char) {
             case '\t': // Tab
