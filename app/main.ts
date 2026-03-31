@@ -345,6 +345,10 @@ process.stdin.on('data', (data: Buffer) => {
                     prompt();
                     process.stdout.write(currentInput);
                 }
+                else if(options.length === 0) {
+                    process.stdout.write('\x07'); // таким выводом подаем звуковой сигнал, свидетельствующий о том что нет подстановки
+                    // currentInput += '\x07';
+                }
                 break;
 
             case '\r': // Enter (Windows)
