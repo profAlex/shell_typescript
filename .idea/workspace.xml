@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f8413b89-c7ef-4a79-a9e2-0a535539403e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +44,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/bb/Documents/CODECRAFTERS_Practice/codecrafters-shell-typescript",
+    "last_opened_file_path": "/home/bb/Documents/IT_INCUBATOR_Practice/Lessons/L11-H",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -118,7 +117,9 @@
       <workItem from="1773673927973" duration="7938000" />
       <workItem from="1773695721459" duration="1098000" />
       <workItem from="1773777398071" duration="515000" />
-      <workItem from="1774988962956" duration="1148000" />
+      <workItem from="1774988962956" duration="1522000" />
+      <workItem from="1775041467009" duration="337000" />
+      <workItem from="1775212510801" duration="752000" />
     </task>
     <servers />
   </component>

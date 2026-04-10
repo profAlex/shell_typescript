@@ -22,7 +22,7 @@ export class PathManager {
         return pathArray.includes(directory);
     }
 
-    static getAvaliableDirectories() :string[] | null {
+    static getAvaliableDirectories(): string[] | null {
         return process.env.PATH?.split(this.getSeparator()) as string[] || null;
     }
 }

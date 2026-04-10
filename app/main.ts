@@ -4,6 +4,7 @@ import {appendFile, overwriteFile} from "./utility/write-overwrite-file-command.
 import {resolveCustomExecResultForCommandArray} from "./utility/resolve-custom-exec-result.ts";
 import {listRootAutoCompletions, Trie} from "./utility/trie-util.ts";
 import * as test from "node:test";
+import {findAllExecutableNames} from "./utility/fill-trie.ts";
 
 
 // const rl = createInterface({
@@ -308,6 +309,11 @@ let trieClass = new Trie();
 trieClass.insertWord("echo");
 trieClass.insertWord("exit");
 
+// const avaliableExecutablesList = await findAllExecutableNames();
+// for (const executable of avaliableExecutablesList) {
+//     trieClass.insertWord(executable);
+// }
+
 function getAutocompleteOptions(input: string): string[] {
     // генерирует массив слов, в которых начало слова соответствует заданному в input
     const result = trieClass.searchPossibleWords(input);
@@ -388,7 +394,7 @@ process.stdin.on('data', (data: Buffer) => {
 
 
 
-// Функция обработки команды (ваш существующий код)
+// Функция обработки команды
 async function handleCommand(command: string) {
     command = command.replace(/''+/g, '');
     command = command.replace(/""+/g, '');
