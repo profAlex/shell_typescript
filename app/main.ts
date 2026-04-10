@@ -309,10 +309,11 @@ let trieClass = new Trie();
 trieClass.insertWord("echo");
 trieClass.insertWord("exit");
 
-// const avaliableExecutablesList = await findAllExecutableNames();
-// for (const executable of avaliableExecutablesList) {
-//     trieClass.insertWord(executable);
-// }
+const avaliableExecutablesList = await findAllExecutableNames();
+for (const executable of avaliableExecutablesList) {
+    trieClass.insertWord(executable);
+    // console.log("INSERTED FILE:", executable);
+}
 
 function getAutocompleteOptions(input: string): string[] {
     // генерирует массив слов, в которых начало слова соответствует заданному в input
