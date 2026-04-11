@@ -67,6 +67,8 @@ import fs from 'fs';
 import path from 'path';
 import {PathManager} from "./path-manager.ts";
 
+
+// для формирования всех возможных исполняемых файлов назодящихся в PATH
 export async function findAllExecutableNames(): Promise<string[]> {
     const executables: string[] = [];
     const directories = PathManager.getAvaliableDirectories();

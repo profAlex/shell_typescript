@@ -1,11 +1,81 @@
-import {createInterface} from "readline";
-import {CommandParserLite} from "./utility/parser.ts";
-import {appendFile, overwriteFile} from "./utility/write-overwrite-file-command.ts";
-import {resolveCustomExecResultForCommandArray} from "./utility/resolve-custom-exec-result.ts";
-import {listRootAutoCompletions, Trie} from "./utility/trie-util.ts";
-import * as test from "node:test";
-import {findAllExecutableNames} from "./utility/fill-trie.ts";
+import {handleCommand} from "./utility/handle-command.ts";
+import {initializeApp, trieClass} from "./setup-app.ts";
 
+
+function getAutocompleteOptions(input: string): string[] {
+    // генерирует массив слов, в которых начало слова соответствует заданному в input
+    const result = trieClass.searchPossibleWords(input);
+
+    return result;
+}
+
+function prompt() {
+    process.stdout.write('\x1B[2K'); // Очищаем строку
+    process.stdout.write('\r$ ');     // Возвращаем курсор в начало
+}
+
+// глобальный буфер, в котором накапливается строка, необходимо в первую очередь для того чтобы передать команду в обработчик команд целиком при нажатии на enter, а также в обработчик клавиши TAB
+let currentInput = '';
+
+process.stdin.on('data', (data: Buffer) => {
+    const input = data.toString();
+    // в ряде случаев input может состоять из нескольких символов, т.е. при одном нажати клавиши будет генерироваться несколько символов в 'data'
+    for (const char of input) {
+        switch (char) {
+            case '\t': // Tab
+                const options = getAutocompleteOptions(currentInput);
+                if (options.length > 0) {
+                    currentInput = options[0];
+                    prompt();
+                    process.stdout.write(currentInput);
+                } else if (options.length === 0) {
+                    process.stdout.write('\x07'); // таким выводом подаем звуковой сигнал, свидетельствующий о том что нет подстановки
+                    // currentInput += '\x07';
+                }
+                break;
+
+            case '\r': // Enter (Windows)
+            case '\n': // Enter (Unix)
+                process.stdout.write('\n');
+
+                if (currentInput.trim() === 'exit') {
+                    process.exit();
+                }
+
+                handleCommand(currentInput)
+                    .then(() => {
+                        currentInput = '';
+                        prompt();
+                    })
+                    .catch(console.error);
+                break;
+
+            case '\x7f': // Backspace (Linux/macOS)
+            case '\b':   // Backspace (Windows)
+                if (currentInput.length > 0) {
+                    currentInput = currentInput.slice(0, -1);
+                    prompt();
+                    process.stdout.write(currentInput);
+                }
+                break;
+
+            default:
+                // Выводим ТОЛЬКО печатные символы (не управляющие)
+                if (char >= ' ' && !'\r\n\t\b\x7f'.includes(char)) {
+                    currentInput += char;
+                    process.stdout.write(char); // <-- ВАЖНО: явно выводим символ
+                }
+        }
+    }
+});
+
+
+// Начинаем
+await initializeApp();
+prompt();
+
+
+// // OLD VERSION
 
 // const rl = createInterface({
 //     input: process.stdin,
@@ -303,185 +373,3 @@ import {findAllExecutableNames} from "./utility/fill-trie.ts";
 // } catch (e) {
 //     console.error(`Error: ${e}`);
 // }
-
-
-let trieClass = new Trie();
-trieClass.insertWord("echo");
-trieClass.insertWord("exit");
-
-const avaliableExecutablesList = await findAllExecutableNames();
-for (const executable of avaliableExecutablesList) {
-    trieClass.insertWord(executable);
-    // console.log("INSERTED FILE:", executable);
-}
-
-function getAutocompleteOptions(input: string): string[] {
-    // генерирует массив слов, в которых начало слова соответствует заданному в input
-    const result = trieClass.searchPossibleWords(input);
-
-    return result;
-}
-
-// глобальный буфер, в котором накапливается строка, необходимо в первую очередь для того чтобы передать команду в обработчик команд целиком при нажатии на enter, а также в обработчик клавиши TAB
-let currentInput = '';
-
-function prompt() {
-    process.stdout.write('\x1B[2K'); // Очищаем строку
-    process.stdout.write('\r$ ');     // Возвращаем курсор в начало
-}
-
-// Инициализация: отключаем эхо терминала
-process.stdin.setEncoding('utf8');
-if (process.stdin.isTTY && process.stdin.setRawMode) {
-    try {
-        process.stdin.setRawMode(true); // Отключаем обработку терминала
-    } catch (e) {
-        console.warn('Raw mode not supported');
-    }
-}
-
-process.stdin.on('data', (data: Buffer) => {
-    const input = data.toString();
-    // в ряде случаев input может состоять из нескольких символов, т.е. при одном нажати клавиши будет генерироваться несколько символов в 'data'
-    for (const char of input) {
-        switch (char) {
-            case '\t': // Tab
-                const options = getAutocompleteOptions(currentInput);
-                if (options.length > 0) {
-                    currentInput = options[0];
-                    prompt();
-                    process.stdout.write(currentInput);
-                }
-                else if(options.length === 0) {
-                    process.stdout.write('\x07'); // таким выводом подаем звуковой сигнал, свидетельствующий о том что нет подстановки
-                    // currentInput += '\x07';
-                }
-                break;
-
-            case '\r': // Enter (Windows)
-            case '\n': // Enter (Unix)
-                process.stdout.write('\n');
-
-                if (currentInput.trim() === 'exit') {
-                    process.exit();
-                }
-
-                handleCommand(currentInput)
-                    .then(() => {
-                        currentInput = '';
-                        prompt();
-                    })
-                    .catch(console.error);
-                break;
-
-            case '\x7f': // Backspace (Linux/macOS)
-            case '\b':   // Backspace (Windows)
-                if (currentInput.length > 0) {
-                    currentInput = currentInput.slice(0, -1);
-                    prompt();
-                    process.stdout.write(currentInput);
-                }
-                break;
-
-            default:
-                // Выводим ТОЛЬКО печатные символы (не управляющие)
-                if (char >= ' ' && !'\r\n\t\b\x7f'.includes(char)) {
-                    currentInput += char;
-                    process.stdout.write(char); // <-- ВАЖНО: явно выводим символ
-                }
-        }
-    }
-});
-
-
-
-// Функция обработки команды
-async function handleCommand(command: string) {
-    command = command.replace(/''+/g, '');
-    command = command.replace(/""+/g, '');
-
-    const parser = new CommandParserLite(command);
-    parser.parse();
-    const splitCommand: string[] = parser.getOutput();
-
-    if (splitCommand.length === 1 && splitCommand[0] === 'testcustom') {
-        try {
-            let testClass = new Trie();
-            testClass.insertWord("test");
-            testClass.insertWord("teso");
-            testClass.insertWord("cat");
-            testClass.insertWord("catastrophie");
-            testClass.insertWord("");
-            testClass.insertWord("l");
-
-            console.log(testClass.searchWord("cat"));
-            console.log(testClass.searchWord("catno"));
-            console.log("TESTING FUNCTION:", listRootAutoCompletions(testClass));
-        } catch (err) {
-            console.log(`${err}`);
-        }
-    } else if (splitCommand.length > 1 && (splitCommand.includes('>') || splitCommand.includes('1>'))) {
-        const index = splitCommand.findIndex(index => index === '>' || index === '1>');
-        let pathToWriteTo = splitCommand.splice(index);
-        pathToWriteTo = pathToWriteTo.splice(1);
-
-        const output = await resolveCustomExecResultForCommandArray(splitCommand);
-        if (output.error) {
-            // console.log(output.error);
-            process.stdout.write(output.error + '\n');
-
-        }
-        await overwriteFile(pathToWriteTo[0], output.output);
-    } else if (splitCommand.length > 1 && splitCommand.includes('2>')) {
-        const index = splitCommand.findIndex(index => index === '2>');
-        let pathToWriteTo = splitCommand.splice(index);
-        pathToWriteTo = pathToWriteTo.splice(1);
-
-        const output = await resolveCustomExecResultForCommandArray(splitCommand);
-        await overwriteFile(pathToWriteTo[0], output.error.trimEnd());
-        if (output.output) {
-            // console.log(output.output.trimEnd());
-            process.stdout.write(output.output.trimEnd() + '\n');
-
-        }
-    } else if (splitCommand.length > 1 && (splitCommand.includes('>>') || splitCommand.includes('1>>'))) {
-        const index = splitCommand.findIndex(index => index === '>>' || index === '1>>');
-        let pathToWriteTo = splitCommand.splice(index);
-        pathToWriteTo = pathToWriteTo.splice(1);
-
-        const output = await resolveCustomExecResultForCommandArray(splitCommand);
-        if (output.error) {
-            // console.log(output.error.trim());
-            process.stdout.write(output.error.trim() + '\n');
-
-        }
-        await appendFile(pathToWriteTo[0], output.output);
-    } else if (splitCommand.length > 1 && splitCommand.includes('2>>')) {
-        const index = splitCommand.findIndex(index => index === '2>>');
-        let pathToWriteTo = splitCommand.splice(index);
-        pathToWriteTo = pathToWriteTo.splice(1);
-
-        const output = await resolveCustomExecResultForCommandArray(splitCommand);
-        await appendFile(pathToWriteTo[0], output.error.trimEnd());
-        if (output.output) {
-            // console.log(output.output.trimEnd());
-            process.stdout.write(output.output.trimEnd() + '\n');
-        }
-    } else {
-        const output = await resolveCustomExecResultForCommandArray(splitCommand);
-        if (output.error) {
-            // console.log(output.error);
-            process.stdout.write(output.error + '\n');
-
-        } else if (output.output) {
-            //console.log(output.output);
-            process.stdout.write(output.output + '\n');
-        }
-    }
-}
-
-// Начинаем
-prompt();
-
-// process.stdin.setEncoding('utf8');
-// process.stdin.setRawMode?(true); // Включаем сырой режим (если доступно)

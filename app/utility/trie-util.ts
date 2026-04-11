@@ -81,7 +81,7 @@ export class Trie {
     }
 }
 
-
+// функция для получения всех содержащихся слов внутри
 export function listRootAutoCompletions(trieExemplar: Trie): string[] {
     let listOfWords: string[] = [];
     let nodeStart = trieExemplar.getRoot();
@@ -99,25 +99,6 @@ export function listRootAutoCompletions(trieExemplar: Trie): string[] {
     for (const [firstLetter, childNode] of nodeStart.children) {
         getWord(firstLetter, childNode);
     }
-
-    //
-    // for(const [firstLetter, anotherNode] of nodeStart.children) {
-    //     let newWord:string = firstLetter;
-    //
-    //     function getWord(node: TrieNode): void {
-    //         let current = node;
-    //         for (const [char, nextNode] of current.children) {
-    //             newWord += char;
-    //             if (current.isEndOfWord === true) {
-    //                 listOfWords.push(newWord);
-    //             }
-    //             getWord(nextNode);
-    //         }
-    //     }
-    //
-    //     getWord(anotherNode);
-    // }
-    //
 
     return listOfWords;
 
